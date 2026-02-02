@@ -4,6 +4,10 @@
 
 **Webapp parity**: The webapp dashboard mirrors many tools via the webapp API (Channels page → POST /api/channels; Routes page → POST /api/routing; Integrations → /api/gateway/status, /api/skills). See [README_WEBAPP.md](README_WEBAPP.md).
 
+## MCP client config
+
+Add clawd-mcp to your MCP client config (Cursor, Claude Desktop, Windsurf, Zed, etc.). Use the snippet in [INSTALL.md](../INSTALL.md#mcp-config-snippet) with `env.PYTHONPATH` set to `<REPO_ROOT>/src` and `PYTHONUNBUFFERED=1`; no `cwd` or editable install required. Client config file locations: [INSTALL.md#mcp-client-config-locations](../INSTALL.md#mcp-client-config-locations).
+
 ## Architecture
 
 ```
@@ -18,6 +22,7 @@ clawd-mcp (stdio)
     +-- clawd_routing   -> OpenClaw Gateway (routing rules, update, test, session lookup)
     +-- clawd_skills    -> Local workspace + ClawHub
     +-- clawd_gateway   -> Gateway health + openclaw doctor
+    +-- clawd_openclaw_disconnect -> Disconnect/remove OpenClaw (steps + doc link; no side effects)
     +-- clawd_security  -> Audit, skill scan, hardening, provision_sandbox
     +-- clawd_moltbook  -> Feed, search, post, comment, upvote, heartbeat
     |
@@ -141,6 +146,20 @@ Gateway status and health.
 | `doctor` | Run `openclaw doctor` | Subprocess |
 
 **Parameters**: `operation`
+
+---
+
+### clawd_openclaw_disconnect
+
+Disconnect from OpenClaw and get removal steps (informational only; no side effects).
+
+| Description | Backend |
+|-------------|---------|
+| Returns steps to disconnect (unset env, remove from MCP config), optional uninstall of OpenClaw CLI, optional removal of `~/.openclaw`. Link to [INSTALL.md#removing-openclaw](../INSTALL.md#removing-openclaw). | Static |
+
+**Parameters**: none
+
+Use when the user wants to stop using OpenClaw (e.g. after security advisories or deciding it is not for them). Webapp Security page has the same steps and link.
 
 ---
 

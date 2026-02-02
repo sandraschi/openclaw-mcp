@@ -15,13 +15,31 @@ DEFAULT_FEATURES = [
 ]
 
 
-def _hero_image_url(keyword: str = "technology") -> str:
-    kw = keyword.replace(" ", ",") if keyword else "technology"
-    return f"https://loremflickr.com/1200/600/{kw}"
+# Stable default: blue lobster (Wikimedia Commons, CC BY-SA). No random placeholder.
+DEFAULT_HERO_IMAGE_URL = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Blue-lobster.jpg/480px-Blue-lobster.jpg"
+
+
+def _hero_image_url(keyword: str = "blue,lobster") -> str:
+    kw = (keyword or "").strip()
+    normalized = kw.lower().replace(" ", ",")
+    if not kw or normalized in ("lobster", "blue,lobster"):
+        return DEFAULT_HERO_IMAGE_URL
+    return f"https://loremflickr.com/480/240/{normalized}"
+
+
+# Stable feature images: lobster-related (Wikimedia Commons, CC BY-SA).
+DEFAULT_FEATURE_IMAGES = [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Maine_Style_Lobster_Roll.jpg/400px-Maine_Style_Lobster_Roll.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Grilled_Lobster_%288558909573%29.jpg/400px-Grilled_Lobster_%288558909573%29.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Blue-lobster.jpg/400px-Blue-lobster.jpg",
+]
 
 
 def _feature_image_url(keyword: str, index: int = 0) -> str:
-    kw = (keyword or "abstract").replace(" ", ",")
+    kw = (keyword or "").strip().lower().replace(" ", ",")
+    # Default keywords (lobster-related) use stable images
+    if not kw or kw in ("lobster", "blue,lobster", "blazing", "fast", "secure", "design", "open", "source"):
+        return DEFAULT_FEATURE_IMAGES[index % len(DEFAULT_FEATURE_IMAGES)]
     return f"https://loremflickr.com/400/300/{kw}"
 
 
@@ -154,7 +172,7 @@ ECOSYSTEM_NEWS = [
     ("Ollama provider – OpenClaw", "docs.clawd.bot", "https://docs.clawd.bot/providers/ollama"),
 ]
 ECOSYSTEM_REVIEWERS = [
-    ("Matthew Berman", "YouTube – AI and LLM reviews, local and open-source models", "https://www.youtube.com/@matthewberman"),
+    ("Matthew Berman", "YouTube – AI and LLM reviews, local and open-source models", "https://www.youtube.com/@matthew_berman"),
     ("Simon Willison", "Hacker News, blog – AI, dev tools, Datasette; thoughtful takes on AI engineering", "https://simonwillison.net"),
     ("AI Explained", "YouTube – AI news and explainers", "https://www.youtube.com/@aiexplained"),
 ]
@@ -231,7 +249,8 @@ def generate_landing_page(
     author_bio: str = "I build things. Powered by OpenClaw, Moltbook, and clawd-mcp.",
     donate_link: str = "#",
     target_path: str | Path = ".",
-    hero_image_keyword: str = "technology",
+    hero_image_keyword: str = "blue,lobster",
+    include_pictures: bool = True,
 ) -> str:
     """
     Generate a full static landing site in target_path/<project_slug>/www/ and DEPLOY.md in parent.
@@ -243,11 +262,11 @@ def generate_landing_page(
     output_dir = base / "www"
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    hero_img_url = _hero_image_url(hero_image_keyword)
+    hero_img_url = _hero_image_url(hero_image_keyword) if include_pictures else ""
     processed_feature_imgs = [
         _feature_image_url(feat.split(":")[0].strip() if ":" in feat else "tech", i)
         for i, feat in enumerate(features)
-    ]
+    ] if include_pictures else []
 
     feature_cards_html = ""
     for i, feat in enumerate(features):
@@ -255,19 +274,31 @@ def generate_landing_page(
             ft, fd = feat.split(":", 1)
         else:
             ft, fd = feat.strip(), "Experience the power of innovation."
-        img = processed_feature_imgs[i] if i < len(processed_feature_imgs) else "https://loremflickr.com/400/300/abstract"
-        feature_cards_html += f"""
+        if include_pictures:
+            img = processed_feature_imgs[i] if i < len(processed_feature_imgs) else "https://loremflickr.com/400/300/abstract"
+            feature_cards_html += f"""
         <div class="feature-card">
             <img src="{img}" alt="{ft.strip()}" class="feature-img">
             <h3>{ft.strip()}</h3>
             <p>{fd.strip()}</p>
         </div>"""
+        else:
+            feature_cards_html += f"""
+        <div class="feature-card">
+            <h3>{ft.strip()}</h3>
+            <p>{fd.strip()}</p>
+        </div>"""
 
-    index_content = f"""
-    <section class="hero">
+    hero_visual_html = ""
+    if include_pictures:
+        hero_visual_html = f"""
         <div class="hero-visual">
             <img src="{hero_img_url}" alt="Hero">
         </div>
+"""
+    index_content = f"""
+    <section class="hero">
+{hero_visual_html}
         <h1>{hero_title}</h1>
         <p>{hero_subtitle}</p>
         <div class="hero-btns">

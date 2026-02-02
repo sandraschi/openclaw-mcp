@@ -12,6 +12,7 @@ from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 OLLAMA_BASE = os.environ.get("OLLAMA_BASE", "http://localhost:11434")
@@ -19,6 +20,7 @@ OLLAMA_BASE = os.environ.get("OLLAMA_BASE", "http://localhost:11434")
 # Requires PYTHONPATH=src
 from clawd_mcp.config import Settings
 from clawd_mcp.gateway_client import GatewayClient
+from clawd_mcp.moltbook_client import MoltbookClient
 from clawd_mcp.tools.routing import _routing_config_fallback
 
 from webapp_api.ollama_client import (
@@ -31,8 +33,16 @@ from webapp_api.ollama_client import (
     ollama_tags,
 )
 from webapp_api.landing_page_service import generate_landing_page
+from webapp_api.mcp_config_insert import insert_into_config, list_clients
 
 app = FastAPI(title="clawd-mcp Webapp API", version="0.1.0")
+
+# Serve generated landing pages via HTTP
+REPO_ROOT = Path(__file__).resolve().parent.parent
+GENERATED_DIR = REPO_ROOT / "generated"
+GENERATED_DIR.mkdir(parents=True, exist_ok=True)
+app.mount("/generated", StaticFiles(directory=str(GENERATED_DIR), html=True), name="generated")
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5180", "http://127.0.0.1:5180"],
@@ -175,6 +185,34 @@ CLAW_NEWS = [
 def clawnews():
     """Today's media echo: curated recent OpenClaw/Moltbook news and docs."""
     return {"success": True, "items": CLAW_NEWS}
+
+
+class MoltbookRegisterRequest(BaseModel):
+    name: str
+    bio: str = ""
+    personality: str = ""
+    goals: str = ""
+    ideas: str = ""
+
+
+@app.post("/api/moltbook/register")
+async def moltbook_register_api(req: MoltbookRegisterRequest):
+    """Register an agent with Moltbook (POST /api/v1/agents/register). Requires MOLTBOOK_API_KEY. OpenClaw is not required for the API call but recommended for full flow."""
+    if not req.name.strip():
+        raise HTTPException(status_code=400, detail="name required")
+    client = MoltbookClient(settings)
+    try:
+        body = {
+            "name": req.name.strip(),
+            "bio": (req.bio or "").strip(),
+            "personality": (req.personality or "").strip(),
+            "goals": (req.goals or "").strip(),
+            "ideas": (req.ideas or "").strip(),
+        }
+        result = await client.post("/agents/register", json=body)
+        return result
+    finally:
+        await client.close()
 
 
 # --- Ollama proxy (local LLM; assumes Ollama running) ---
@@ -344,14 +382,17 @@ class LandingPageRequest(BaseModel):
     author_bio: str = "I build things. Powered by OpenClaw, Moltbook, and clawd-mcp."
     donate_link: str = "#"
     hero_image_keyword: str = "technology"
+    include_pictures: bool = True
 
 
 @app.post("/api/landing-page")
 async def landing_page_api(req: LandingPageRequest):
     """Generate a static landing page site (hero, features, bio, download, donate, how it works) and DEPLOY.md."""
+    # Default output: <repo_root>/generated (relative to cloned repo root, not CWD)
+    repo_root = Path(__file__).resolve().parent.parent
     target_path = os.environ.get(
         "LANDING_PAGE_OUTPUT_DIR",
-        str(Path.cwd() / "generated"),
+        str(repo_root / "generated"),
     )
     try:
         out_path = await asyncio.to_thread(
@@ -365,15 +406,61 @@ async def landing_page_api(req: LandingPageRequest):
             author_bio=req.author_bio.strip(),
             donate_link=req.donate_link.strip(),
             target_path=target_path,
-            hero_image_keyword=req.hero_image_keyword.strip() or "technology",
+            hero_image_keyword=req.hero_image_keyword.strip() or "blue,lobster",
+            include_pictures=req.include_pictures,
         )
+        # Construct HTTP URL to the generated landing page (served via /generated mount)
+        slug = req.project_name.strip().lower().replace(" ", "-") or "my-site"
+        index_url = f"http://localhost:5181/generated/{slug}/www/index.html"
         return {
             "success": True,
             "path": out_path,
-            "message": f"Landing page generated at {out_path}. Open index.html in a browser. See DEPLOY.md in the project folder for how to get it online.",
+            "index_url": index_url,
+            "message": "Landing page ready. Click below to preview.",
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/mcp-config/clients")
+def mcp_config_clients():
+    """List MCP clients and their config file paths (for UI checkboxes)."""
+    return {"success": True, "clients": list_clients()}
+
+
+class McpConfigInsertRequest(BaseModel):
+    clients: list[str]
+
+
+@app.post("/api/mcp-config/insert")
+def mcp_config_insert_api(req: McpConfigInsertRequest):
+    """Insert clawd-mcp snippet into selected client configs. Backs up originals; skips if already present."""
+    repo_root = REPO_ROOT
+    updated: list[str] = []
+    skipped: list[str] = []
+    backups: dict[str, str] = {}
+    errors: dict[str, str] = {}
+    client_ids = [c.strip().lower() for c in req.clients if c.strip()]
+    if not client_ids:
+        raise HTTPException(status_code=400, detail="Select at least one client")
+    for cid in client_ids:
+        out = insert_into_config(cid, repo_root)
+        if out.get("error"):
+            errors[cid] = out["error"]
+        elif out.get("skipped"):
+            skipped.append(cid)
+        elif out.get("updated"):
+            updated.append(cid)
+            if out.get("backup_path"):
+                backups[cid] = out["backup_path"]
+    return {
+        "success": True,
+        "updated": updated,
+        "skipped": skipped,
+        "backups": backups,
+        "errors": errors,
+        "message": f"Updated: {updated}. Skipped (already present): {skipped}. Errors: {list(errors.keys()) or 'none'}.",
+    }
 
 
 @app.post("/api/routing")

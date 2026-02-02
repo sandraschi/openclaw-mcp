@@ -2,7 +2,7 @@
 
 OpenClaw (formerly Moltbot/Clawdbot) has major security risks when run with default configuration. This document summarizes threats, hardening steps, network patterns (Tailscale, Traefik), and clawd-mcp security tools.
 
-**Quick link**: [clawd_security tool](#clawd-mcp-security-tools) | [Hardening checklist](#hardening-checklist-auth0-intruder) | [Network patterns](#network-patterns-tailscale-traefik) | [Security patterns](#security-patterns)
+**Quick link**: [clawd_security tool](#clawd-mcp-security-tools) | [Hardening checklist](#hardening-checklist-auth0-intruder) | [Network patterns](#network-patterns-tailscale-traefik) | [Security patterns](#security-patterns) | [Removing OpenClaw](../INSTALL.md#removing-openclaw)
 
 ---
 

@@ -7,7 +7,7 @@ import sys
 from clawd_mcp.config import Settings
 from clawd_mcp.logging_config import setup_logging
 from clawd_mcp.mcp_instance import mcp
-from clawd_mcp.tools import agent, channels, gateway, moltbook, routing, security, sessions, skills  # noqa: F401 -- register tools
+from clawd_mcp.tools import agent, channels, gateway, moltbook, openclaw_remove, routing, security, sessions, skills  # noqa: F401 -- register tools
 
 _settings = Settings()
 setup_logging(_settings)

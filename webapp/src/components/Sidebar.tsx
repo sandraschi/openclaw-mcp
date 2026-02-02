@@ -14,7 +14,7 @@ const navItems = [
   { to: "/clawnews", icon: Newspaper, label: "Clawnews" },
   { to: "/skills", icon: Layers, label: "Skills" },
   { to: "/security", icon: Shield, label: "Security" },
-  { to: "/starter", icon: Globe, label: "Starter page" },
+  { to: "/starter", icon: Globe, label: "Generate" },
   { to: "/settings", icon: Settings, label: "Settings" },
 ];
 

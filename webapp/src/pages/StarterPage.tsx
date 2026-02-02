@@ -1,7 +1,14 @@
-import { useState } from "react";
-import { Globe, FileCode, ExternalLink } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Globe, FileCode, ExternalLink, CheckCircle, Settings } from "lucide-react";
 import { cn } from "../utils/cn";
-import { generateLandingPage, type LandingPageRequest } from "../services/api";
+import {
+  generateLandingPage,
+  type LandingPageRequest,
+  fetchMcpConfigClients,
+  insertMcpConfig,
+  type McpConfigClient,
+  type McpConfigInsertResponse,
+} from "../services/api";
 
 const DEPLOY_HINTS = [
   {
@@ -45,10 +52,72 @@ export default function StarterPage() {
     "I build things. Powered by OpenClaw, Moltbook, and clawd-mcp."
   );
   const [donateLink, setDonateLink] = useState("#");
-  const [heroImageKeyword, setHeroImageKeyword] = useState("technology");
+  const [heroImageKeyword, setHeroImageKeyword] = useState("blue lobster");
+  const [includePictures, setIncludePictures] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<{ path: string; message: string } | null>(null);
+  const [result, setResult] = useState<{ path: string; message: string; index_url?: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const [mcpClients, setMcpClients] = useState<McpConfigClient[]>([]);
+  const [mcpSelected, setMcpSelected] = useState<Set<string>>(new Set());
+  const [mcpInsertLoading, setMcpInsertLoading] = useState(false);
+  const [mcpInsertResult, setMcpInsertResult] = useState<McpConfigInsertResponse | null>(null);
+  const [mcpInsertError, setMcpInsertError] = useState<string | null>(null);
+
+  const [gatewayUrl, setGatewayUrl] = useState("http://127.0.0.1:18789");
+  const [gatewayToken, setGatewayToken] = useState("");
+  const [openclawSnippet, setOpenclawSnippet] = useState<{ env: string; hint: string } | null>(null);
+
+  useEffect(() => {
+    fetchMcpConfigClients()
+      .then((r) => setMcpClients(r.clients || []))
+      .catch(() => setMcpClients([]));
+  }, []);
+
+  function handleMcpToggle(id: string) {
+    setMcpSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  function handleOpenClawSnippet() {
+    const url = gatewayUrl.trim() || "http://127.0.0.1:18789";
+    const token = gatewayToken.trim();
+    const envLines = [
+      "# OpenClaw Gateway (clawd-mcp, webapp)",
+      `OPENCLAW_GATEWAY_URL=${url}`,
+    ];
+    if (token) {
+      envLines.push(`OPENCLAW_GATEWAY_TOKEN=${token}`);
+    } else {
+      envLines.push("# OPENCLAW_GATEWAY_TOKEN=  # set if Gateway auth is enabled");
+    }
+    envLines.push("# MOLTBOOK_API_KEY=  # optional");
+    const env = envLines.join("\n");
+    const hint = "Routing: OpenClaw stores channel-to-agent rules in ~/.openclaw/openclaw.json. Use the webapp Routes page or MCP tool clawd_routing to view/update. See INSTALL.md for config locations.";
+    setOpenclawSnippet({ env, hint });
+  }
+
+  async function handleMcpInsert() {
+    if (mcpSelected.size === 0) {
+      setMcpInsertError("Select at least one client.");
+      return;
+    }
+    setMcpInsertLoading(true);
+    setMcpInsertError(null);
+    setMcpInsertResult(null);
+    try {
+      const res = await insertMcpConfig({ clients: Array.from(mcpSelected) });
+      setMcpInsertResult(res);
+    } catch (err) {
+      setMcpInsertError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setMcpInsertLoading(false);
+    }
+  }
 
   async function handleGenerate() {
     const name = projectName.trim();
@@ -72,12 +141,13 @@ export default function StarterPage() {
       author_name: authorName.trim(),
       author_bio: authorBio.trim(),
       donate_link: donateLink.trim(),
-      hero_image_keyword: heroImageKeyword.trim() || "technology",
+      hero_image_keyword: heroImageKeyword.trim() || "blue lobster",
+      include_pictures: includePictures,
     };
     try {
       const res = await generateLandingPage(body);
       if (res.success && res.path && res.message) {
-        setResult({ path: res.path, message: res.message });
+        setResult({ path: res.path, message: res.message, index_url: res.index_url });
       } else {
         setError(res.message ?? "Generation failed.");
       }
@@ -93,20 +163,20 @@ export default function StarterPage() {
       <section>
         <h1 className="flex items-center gap-2 font-mono text-3xl font-bold text-foreground">
           <Globe className="h-8 w-5 text-primary" />
-          Starter page
+          Generate
         </h1>
         <p className="mt-2 text-foreground-secondary">
-          Generate a simple hero landing site for your web presence (e.g. "India Claw"). Static HTML/CSS/JS plus a DEPLOY.md with hints on how to get it online.
+          Landing pages, and more. Start with a static hero site (HTML/CSS/JS + DEPLOY.md); more generators may be added here.
         </p>
       </section>
 
       <section className="rounded-lg border border-border bg-card p-6">
         <h2 className="flex items-center gap-2 font-mono text-xl font-semibold text-foreground">
           <FileCode className="h-5 w-5 text-primary" />
-          Generate landing page
+          Options
         </h2>
         <p className="mt-1 text-sm text-foreground-secondary">
-          Fill in project name and hero title (e.g. India Claw). Features: one per line, optional "Title: Description" format. Output is written to the server (default: ./generated/&lt;project_slug&gt;/www). Set LANDING_PAGE_OUTPUT_DIR to change.
+          Project name and hero title (e.g. India Claw). Features: one per line, optional "Title: Description". Output: ./generated/&lt;project_slug&gt;/www (override with LANDING_PAGE_OUTPUT_DIR).
         </p>
 
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
@@ -142,12 +212,21 @@ export default function StarterPage() {
               type="text"
               value={heroImageKeyword}
               onChange={(e) => setHeroImageKeyword(e.target.value)}
-              placeholder="e.g. technology"
+              placeholder="e.g. blue lobster"
               className={cn(
                 "mt-1 w-full rounded border border-border bg-background px-4 py-2 font-mono text-sm text-foreground",
                 "focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
               )}
             />
+          </label>
+          <label className="block sm:col-span-2 flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={includePictures}
+              onChange={(e) => setIncludePictures(e.target.checked)}
+              className="rounded border-border text-primary focus:ring-primary"
+            />
+            <span className="text-sm font-medium text-foreground-secondary">Include pictures</span>
           </label>
           <label className="block sm:col-span-2">
             <span className="text-sm font-medium text-foreground-secondary">Hero subtitle</span>
@@ -245,10 +324,162 @@ export default function StarterPage() {
           <p className="mt-4 text-sm text-red-400">{error}</p>
         )}
         {result && (
-          <div className="mt-4 rounded bg-muted p-4 text-sm text-foreground-secondary">
-            <p className="font-medium text-foreground">{result.message}</p>
-            <p className="mt-2 font-mono text-foreground-tertiary">{result.path}</p>
-            <p className="mt-2">Open index.html in a browser. See DEPLOY.md in the project folder for how to get it online.</p>
+          <div className="mt-4 rounded-lg border-2 border-green-500 bg-green-500/10 p-6">
+            <div className="flex items-start gap-3">
+              <CheckCircle className="h-6 w-6 shrink-0 text-green-500 mt-0.5" />
+              <div className="flex-1">
+                <p className="font-semibold text-foreground text-lg">{result.message}</p>
+                {result.index_url && (
+                  <div className="mt-4 flex flex-wrap gap-3">
+                    <a
+                      href={result.index_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={cn(
+                        "inline-flex items-center gap-2 rounded border-2 border-green-500 bg-green-500 px-4 py-2 text-sm font-medium text-white",
+                        "hover:bg-green-600 hover:border-green-600 focus:outline-none focus:ring-2 focus:ring-green-500/50"
+                      )}
+                    >
+                      <ExternalLink className="h-4 w-4" />
+                      Open landing page
+                    </a>
+                  </div>
+                )}
+                <p className="mt-3 text-sm text-foreground-secondary">
+                  See <span className="font-mono">DEPLOY.md</span> in the project folder for deployment instructions.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+      </section>
+
+      <section className="rounded-lg border border-border bg-card p-6">
+        <h2 className="flex items-center gap-2 font-mono text-xl font-semibold text-foreground">
+          <FileCode className="h-5 w-5 text-primary" />
+          OpenClaw env / config snippet
+        </h2>
+        <p className="mt-2 text-sm text-foreground-secondary">
+          For docs or onboarding. Generates a .env.example-style block and a short routing hint. Paste into your project or README.
+        </p>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          <label className="block">
+            <span className="text-sm font-medium text-foreground-secondary">Gateway URL</span>
+            <input
+              type="url"
+              value={gatewayUrl}
+              onChange={(e) => setGatewayUrl(e.target.value)}
+              placeholder="http://127.0.0.1:18789"
+              className={cn(
+                "mt-1 w-full rounded border border-border bg-background px-4 py-2 font-mono text-sm text-foreground",
+                "focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              )}
+            />
+          </label>
+          <label className="block">
+            <span className="text-sm font-medium text-foreground-secondary">Token (optional)</span>
+            <input
+              type="text"
+              value={gatewayToken}
+              onChange={(e) => setGatewayToken(e.target.value)}
+              placeholder="leave empty if Gateway has no auth"
+              className={cn(
+                "mt-1 w-full rounded border border-border bg-background px-4 py-2 font-mono text-sm text-foreground",
+                "focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              )}
+            />
+          </label>
+        </div>
+        <div className="mt-4">
+          <button
+            type="button"
+            onClick={handleOpenClawSnippet}
+            className={cn(
+              "rounded border border-primary bg-primary px-4 py-2 text-primary-foreground",
+              "hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/50"
+            )}
+          >
+            Generate snippet
+          </button>
+        </div>
+        {openclawSnippet && (
+          <div className="mt-4 space-y-3">
+            <div>
+              <span className="text-sm font-medium text-foreground-secondary">.env.example</span>
+              <pre className="mt-1 rounded border border-border bg-muted p-3 font-mono text-xs text-foreground overflow-x-auto whitespace-pre-wrap break-all">
+                {openclawSnippet.env}
+              </pre>
+            </div>
+            <div>
+              <span className="text-sm font-medium text-foreground-secondary">Routing / config hint</span>
+              <p className="mt-1 text-sm text-foreground-secondary">{openclawSnippet.hint}</p>
+            </div>
+          </div>
+        )}
+      </section>
+
+      <section className="rounded-lg border border-border bg-card p-6">
+        <h2 className="flex items-center gap-2 font-mono text-xl font-semibold text-foreground">
+          <Settings className="h-5 w-5 text-primary" />
+          MCP config snippet
+        </h2>
+        <p className="mt-2 rounded border border-amber-500/50 bg-amber-500/10 px-3 py-2 text-sm text-foreground-secondary">
+          Use with caution. This will modify your MCP client config file(s) and create timestamped backups. If clawd-mcp is already present, it will not be added again (no multi-insert).
+        </p>
+        <p className="mt-2 text-sm text-foreground-secondary">
+          Select one or more clients; the clawd-mcp snippet (PYTHONPATH to this repo) will be inserted into their config. Restart the client after inserting.
+        </p>
+        <div className="mt-4 flex flex-wrap gap-4">
+          {mcpClients.map((c) => (
+            <label key={c.id} className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={mcpSelected.has(c.id)}
+                onChange={() => handleMcpToggle(c.id)}
+                className="rounded border-border text-primary focus:ring-primary"
+              />
+              <span className="text-sm text-foreground-secondary">{c.label}</span>
+              {c.path && (
+                <span className="text-xs text-foreground-tertiary" title={c.path}>
+                  {c.exists ? "(exists)" : "(path only)"}
+                </span>
+              )}
+            </label>
+          ))}
+        </div>
+        <div className="mt-4">
+          <button
+            type="button"
+            onClick={handleMcpInsert}
+            disabled={mcpInsertLoading || mcpSelected.size === 0}
+            className={cn(
+              "rounded border border-primary bg-primary px-4 py-2 text-primary-foreground",
+              "hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50"
+            )}
+          >
+            {mcpInsertLoading ? "Inserting..." : "Insert into selected configs"}
+          </button>
+        </div>
+        {mcpInsertError && (
+          <p className="mt-4 text-sm text-red-400">{mcpInsertError}</p>
+        )}
+        {mcpInsertResult && (
+          <div className="mt-4 rounded-lg border-2 border-green-500 bg-green-500/10 p-4">
+            <div className="flex items-start gap-2">
+              <CheckCircle className="h-5 w-5 shrink-0 text-green-500 mt-0.5" />
+              <div className="text-sm text-foreground-secondary">
+                <p className="font-medium text-foreground">Done.</p>
+                {mcpInsertResult.updated.length > 0 && (
+                  <p className="mt-1">Updated: {mcpInsertResult.updated.join(", ")}. Backups created where applicable.</p>
+                )}
+                {mcpInsertResult.skipped.length > 0 && (
+                  <p className="mt-1">Skipped (already present): {mcpInsertResult.skipped.join(", ")}.</p>
+                )}
+                {Object.keys(mcpInsertResult.errors).length > 0 && (
+                  <p className="mt-1 text-amber-600">Errors: {Object.entries(mcpInsertResult.errors).map(([k, v]) => `${k}: ${v}`).join("; ")}.</p>
+                )}
+              </div>
+            </div>
           </div>
         )}
       </section>

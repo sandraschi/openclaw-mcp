@@ -8,20 +8,46 @@ if (-not (Test-Path (Join-Path $projectRoot "webapp_api\main.py"))) {
 }
 Set-Location $projectRoot
 
-# Kill zombies on 5181 and 5180 so we don't port-hop. Wait after kill so OS releases ports
-# and we don't race with any watcher (killed process is dead; sleep is for port release).
+# Kill zombies on 5181 and 5180 and close their parent PowerShell windows.
+# Kills port-owning process then its parent (the window that started it).
 function Stop-ProcessOnPort {
     param([int]$Port)
     $conn = Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction SilentlyContinue
-    if ($conn) {
-        $conn.OwningProcess | Sort-Object -Unique | ForEach-Object {
-            Stop-Process -Id $_ -Force -ErrorAction SilentlyContinue
-            Write-Host "Killed PID $_ on port $Port"
+    if (-not $conn) { return }
+    $currentPid = $PID
+    $toKill = $conn.OwningProcess | Sort-Object -Unique
+    $parentPids = @()
+    foreach ($childPid in $toKill) {
+        $proc = Get-CimInstance Win32_Process -Filter "ProcessId = $childPid" -ErrorAction SilentlyContinue
+        if ($proc -and $proc.ParentProcessId -and $proc.ParentProcessId -ne 0 -and $proc.ParentProcessId -ne $currentPid) {
+            $parentPids += $proc.ParentProcessId
         }
+        Stop-Process -Id $childPid -Force -ErrorAction SilentlyContinue
+        Write-Host "Killed PID $childPid on port $Port"
+    }
+    $parentPids | Sort-Object -Unique | ForEach-Object {
+        Stop-Process -Id $_ -Force -ErrorAction SilentlyContinue
+        Write-Host "Closed parent window (PID $_)"
     }
 }
 Stop-ProcessOnPort -Port 5181
 Stop-ProcessOnPort -Port 5180
+
+# Kill watchfiles (uvicorn --reload) only for this project; leave other webapps' watchers alone.
+$currentPid = $PID
+Get-CimInstance Win32_Process -ErrorAction SilentlyContinue | Where-Object {
+    $_.CommandLine -match 'watchfiles' -and $_.CommandLine -and $_.CommandLine.IndexOf($projectRoot, [StringComparison]::OrdinalIgnoreCase) -ge 0
+} | ForEach-Object {
+    $childPid = $_.ProcessId
+    $parentPid = $_.ParentProcessId
+    Stop-Process -Id $childPid -Force -ErrorAction SilentlyContinue
+    Write-Host "Killed watchfiles PID $childPid"
+    if ($parentPid -and $parentPid -ne 0 -and $parentPid -ne $currentPid) {
+        Stop-Process -Id $parentPid -Force -ErrorAction SilentlyContinue
+        Write-Host "Closed parent window (PID $parentPid)"
+    }
+}
+
 Start-Sleep -Seconds 2
 
 $srcPath = (Join-Path $projectRoot "src") -replace "'", "''"

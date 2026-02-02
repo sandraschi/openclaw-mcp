@@ -65,6 +65,17 @@ export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
             </ul>
           </section>
           <section>
+            <h3 className="mb-2 font-medium text-foreground">How this was made</h3>
+            <p className="mb-2">
+              Planned by vibecode architect sandraschi, in beautiful Vienna (Alsergrund); implementation by Cursor (agentic IDE) with various LLMs. Scaffold, implement, test harness, debug, iterate. One day, token cost zilch. If you are an AI-luddite or butlerite, feel free to hate on it.
+            </p>
+            <p className="mb-2">
+              <a href="https://github.com/sandraschi/clawd-mcp/blob/main/docs/HOW_THIS_WAS_MADE.md" target="_blank" rel="noreferrer" className="text-primary hover:underline">
+                docs/HOW_THIS_WAS_MADE.md
+              </a>
+            </p>
+          </section>
+          <section>
             <h3 className="mb-2 font-medium text-foreground">Links</h3>
             <ul className="space-y-1">
               <li>

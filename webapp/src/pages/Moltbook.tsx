@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { MessageSquare, Save, ExternalLink } from "lucide-react";
+import { MessageSquare, Save, ExternalLink, Send, CheckCircle } from "lucide-react";
 import { cn } from "../utils/cn";
+import { fetchOpenClawStatus, registerMoltbookAgent } from "../services/api";
 
 const STORAGE_KEY = "clawd-mcp-moltbook-agent-draft";
 
@@ -25,6 +26,10 @@ const defaultDraft: AgentDraft = {
 export default function Moltbook() {
   const [draft, setDraft] = useState<AgentDraft>(defaultDraft);
   const [saved, setSaved] = useState(false);
+  const [openclawInstalled, setOpenclawInstalled] = useState(false);
+  const [registerLoading, setRegisterLoading] = useState(false);
+  const [registerResult, setRegisterResult] = useState<{ success: boolean; message: string } | null>(null);
+  const [registerError, setRegisterError] = useState<string | null>(null);
 
   useEffect(() => {
     try {
@@ -36,6 +41,12 @@ export default function Moltbook() {
     } catch {
       // ignore
     }
+  }, []);
+
+  useEffect(() => {
+    fetchOpenClawStatus()
+      .then((r) => setOpenclawInstalled(r.cli_installed))
+      .catch(() => setOpenclawInstalled(false));
   }, []);
 
   function handleSave() {
@@ -50,6 +61,34 @@ export default function Moltbook() {
     }
   }
 
+  async function handleRegister() {
+    if (!draft.name.trim()) {
+      setRegisterError("Agent name is required.");
+      return;
+    }
+    handleSave();
+    setRegisterLoading(true);
+    setRegisterError(null);
+    setRegisterResult(null);
+    try {
+      const res = await registerMoltbookAgent({
+        name: draft.name.trim(),
+        bio: draft.bio.trim(),
+        personality: draft.personality.trim(),
+        goals: draft.goals.trim(),
+        ideas: draft.ideas.trim(),
+      });
+      setRegisterResult({
+        success: res.success,
+        message: res.message ?? (res.success ? "Registered with Moltbook." : "Registration failed."),
+      });
+    } catch (err) {
+      setRegisterError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setRegisterLoading(false);
+    }
+  }
+
   return (
     <div className="space-y-10">
       <section>
@@ -57,7 +96,7 @@ export default function Moltbook() {
           Moltbook
         </h1>
         <p className="mt-2 text-foreground-secondary">
-          Prepare a Moltbook agent with your ideas: name, bio, personality, goals, and post ideas. Draft is saved locally; use it to configure your OpenClaw agent or Moltbook skill.
+          Prepare a Moltbook agent: name, bio, personality, goals, and post ideas. Save a draft locally; if OpenClaw is installed, you can send the registration request to Moltbook from here.
         </p>
       </section>
 
@@ -150,12 +189,40 @@ export default function Moltbook() {
             <Save className="h-4 w-4" />
             {saved ? "Saved" : "Save draft"}
           </button>
+          {openclawInstalled && (
+            <button
+              type="button"
+              onClick={handleRegister}
+              disabled={registerLoading || !draft.name.trim()}
+              className={cn(
+                "flex items-center gap-2 rounded border border-primary bg-primary px-4 py-2 text-sm text-primary-foreground",
+                "hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50"
+              )}
+            >
+              <Send className="h-4 w-4" />
+              {registerLoading ? "Sending..." : "Register with Moltbook"}
+            </button>
+          )}
           {draft.updatedAt && (
             <span className="text-xs text-foreground-secondary">
               Last saved: {new Date(draft.updatedAt).toLocaleString()}
             </span>
           )}
         </div>
+        {registerError && (
+          <p className="mt-3 text-sm text-red-400">{registerError}</p>
+        )}
+        {registerResult && (
+          <div className={cn(
+            "mt-3 flex items-center gap-2 rounded border p-3 text-sm",
+            registerResult.success
+              ? "border-green-500 bg-green-500/10 text-foreground"
+              : "border-amber-500 bg-amber-500/10 text-foreground"
+          )}>
+            {registerResult.success && <CheckCircle className="h-4 w-4 shrink-0 text-green-500" />}
+            <span>{registerResult.message}</span>
+          </div>
+        )}
       </section>
 
       <section className="rounded-lg border border-border bg-card p-6">

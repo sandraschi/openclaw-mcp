@@ -57,6 +57,36 @@ export async function fetchOpenClawStatus(): Promise<OpenClawStatusResponse> {
   return res.json() as Promise<OpenClawStatusResponse>;
 }
 
+export interface MoltbookRegisterRequest {
+  name: string;
+  bio?: string;
+  personality?: string;
+  goals?: string;
+  ideas?: string;
+}
+
+export interface MoltbookRegisterResponse {
+  success: boolean;
+  message?: string;
+  data?: Record<string, unknown>;
+  error?: string;
+}
+
+export async function registerMoltbookAgent(
+  body: MoltbookRegisterRequest
+): Promise<MoltbookRegisterResponse> {
+  const res = await fetch(apiUrl("/api/moltbook/register"), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(text || `Moltbook register failed: ${res.status}`);
+  }
+  return res.json() as Promise<MoltbookRegisterResponse>;
+}
+
 export interface SkillsResponse {
   success: boolean;
   skills: string[];
@@ -282,11 +312,13 @@ export interface LandingPageRequest {
   author_bio?: string;
   donate_link?: string;
   hero_image_keyword?: string;
+  include_pictures?: boolean;
 }
 
 export interface LandingPageResponse {
   success: boolean;
   path?: string;
+  index_url?: string;
   message?: string;
 }
 
@@ -303,4 +335,52 @@ export async function generateLandingPage(
     throw new Error(`Landing page failed: ${res.status} ${text}`);
   }
   return res.json() as Promise<LandingPageResponse>;
+}
+
+// --- MCP config insert ---
+
+export interface McpConfigClient {
+  id: string;
+  label: string;
+  path: string | null;
+  exists: boolean;
+}
+
+export interface McpConfigClientsResponse {
+  success: boolean;
+  clients: McpConfigClient[];
+}
+
+export async function fetchMcpConfigClients(): Promise<McpConfigClientsResponse> {
+  const res = await fetch(apiUrl("/api/mcp-config/clients"));
+  if (!res.ok) throw new Error(`MCP config clients failed: ${res.status}`);
+  return res.json() as Promise<McpConfigClientsResponse>;
+}
+
+export interface McpConfigInsertRequest {
+  clients: string[];
+}
+
+export interface McpConfigInsertResponse {
+  success: boolean;
+  updated: string[];
+  skipped: string[];
+  backups: Record<string, string>;
+  errors: Record<string, string>;
+  message: string;
+}
+
+export async function insertMcpConfig(
+  body: McpConfigInsertRequest
+): Promise<McpConfigInsertResponse> {
+  const res = await fetch(apiUrl("/api/mcp-config/insert"), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`MCP config insert failed: ${res.status} ${text}`);
+  }
+  return res.json() as Promise<McpConfigInsertResponse>;
 }
