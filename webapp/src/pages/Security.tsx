@@ -2,7 +2,7 @@ import { Shield } from "lucide-react";
 import { cn } from "../utils/cn";
 
 const INSTALL_REMOVING =
-  "https://github.com/sandraschi/clawd-mcp/blob/main/INSTALL.md#removing-openclaw";
+  "https://github.com/sandraschi/openclaw-mcp/blob/main/INSTALL.md#removing-openclaw";
 
 export default function Security() {
   return (
@@ -33,13 +33,13 @@ export default function Security() {
           Remove OpenClaw
         </h2>
         <p className="mt-2 text-sm text-foreground-secondary">
-          If you want to stop using OpenClaw or remove it (e.g. after security advisories or deciding it is not for you), clawd-mcp does not run uninstall for you. Follow the steps below to disconnect and optionally remove OpenClaw.
+          If you want to stop using OpenClaw or remove it (e.g. after security advisories or deciding it is not for you), openclaw-mcp does not run uninstall for you. Follow the steps below to disconnect and optionally remove OpenClaw.
         </p>
         <ol className="mt-4 list-inside list-decimal space-y-2 text-sm text-foreground-secondary">
           <li>Stop the Gateway: quit any running OpenClaw process.</li>
           <li>
-            Disconnect clawd-mcp: unset <code className="rounded bg-muted px-1">OPENCLAW_GATEWAY_URL</code> and{" "}
-            <code className="rounded bg-muted px-1">OPENCLAW_GATEWAY_TOKEN</code> where you run the MCP server or webapp API; remove clawd-mcp from Cursor/Claude Desktop MCP config if you use it.
+            Disconnect openclaw-mcp: unset <code className="rounded bg-muted px-1">OPENCLAW_GATEWAY_URL</code> and{" "}
+            <code className="rounded bg-muted px-1">OPENCLAW_GATEWAY_TOKEN</code> where you run the MCP server or webapp API; remove openclaw-mcp from Cursor/Claude Desktop MCP config if you use it.
           </li>
           <li>Uninstall the CLI (optional): <code className="rounded bg-muted px-1">npm uninstall -g openclaw</code>; see OpenClaw docs if you used the install script.</li>
           <li>Remove config (optional): delete <code className="rounded bg-muted px-1">~/.openclaw</code>.</li>
@@ -59,3 +59,4 @@ export default function Security() {
     </div>
   );
 }
+

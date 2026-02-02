@@ -6,7 +6,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from clawd_mcp.mcp_instance import mcp
+from openclaw_mcp.mcp_instance import mcp
 
 
 def _extract_tool_result(result: object) -> dict:
@@ -22,7 +22,7 @@ def _extract_tool_result(result: object) -> dict:
 @pytest.mark.asyncio
 async def test_clawd_routing_get_routing_rules_success() -> None:
     """clawd_routing get_routing_rules should call Gateway tool routing with action get_routing_rules."""
-    with patch("clawd_mcp.tools.routing.GatewayClient") as mock_gateway_class:
+    with patch("openclaw_mcp.tools.routing.GatewayClient") as mock_gateway_class:
         mock_client = MagicMock()
         mock_client.tools_invoke = AsyncMock(
             return_value={
@@ -54,14 +54,14 @@ async def test_clawd_routing_get_routing_rules_fallback(tmp_path: Path) -> None:
         '{"routing": {"agents": {"telegram": "main", "whatsapp": "main"}}}',
         encoding="utf-8",
     )
-    with patch("clawd_mcp.tools.routing.GatewayClient") as mock_gateway_class:
+    with patch("openclaw_mcp.tools.routing.GatewayClient") as mock_gateway_class:
         mock_client = MagicMock()
         mock_client.tools_invoke = AsyncMock(
             return_value={"success": False, "message": "Unknown tool"}
         )
         mock_client.close = AsyncMock()
         mock_gateway_class.return_value = mock_client
-    with patch("clawd_mcp.tools.routing.Settings") as mock_settings_class:
+    with patch("openclaw_mcp.tools.routing.Settings") as mock_settings_class:
         mock_settings = MagicMock()
         mock_settings.workspace_path = tmp_path / "workspace"
         mock_settings.workspace_path.parent = tmp_path

@@ -1,4 +1,4 @@
-"""Pytest configuration and fixtures for clawd-mcp."""
+"""Pytest configuration and fixtures for openclaw-mcp."""
 
 from pathlib import Path
 from typing import Any
@@ -7,7 +7,7 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 import pytest_asyncio
 
-from clawd_mcp.config import Settings
+from openclaw_mcp.config import Settings
 
 
 @pytest.fixture

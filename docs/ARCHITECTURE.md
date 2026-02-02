@@ -1,4 +1,4 @@
-# clawd-mcp Architecture
+# openclaw-mcp Architecture
 
 One-page overview of repo layout, MCP vs webapp API, and data flow.
 
@@ -7,8 +7,8 @@ One-page overview of repo layout, MCP vs webapp API, and data flow.
 ## Repo layout
 
 ```
-clawd-mcp/
-├── src/clawd_mcp/           # MCP server (FastMCP 2.14+, stdio)
+openclaw-mcp/
+├── src/openclaw_mcp/        # MCP server (FastMCP 2.14+, stdio)
 │   ├── config.py
 │   ├── gateway_client.py
 │   ├── logging_config.py
@@ -41,7 +41,7 @@ clawd-mcp/
 │   ├── start.ps1           # Kill 5181/5180, start API + webapp (PowerShell)
 │   ├── start.bat           # Same (CMD)
 │   ├── check.ps1           # Ruff, mypy, pytest
-│   └── serve_logs.py       # (in src/clawd_mcp) Log server for Logger modal
+│   └── serve_logs.py       # (in src/openclaw_mcp) Log server for Logger modal
 ├── mcpb/                    # MCPB packaging
 ├── tests/
 ├── docs/
@@ -53,7 +53,7 @@ clawd-mcp/
 | Aspect | MCP server | Webapp API |
 |--------|------------|------------|
 | **Transport** | stdio (Cursor, Claude Desktop) | HTTP :5181 (browser via Vite proxy) |
-| **Entry** | `python -m clawd_mcp` | `uvicorn webapp_api.main:app --port 5181` |
+| **Entry** | `python -m openclaw_mcp` | `uvicorn webapp_api.main:app --port 5181` |
 | **Tools** | clawd_agent, clawd_sessions, clawd_channels, clawd_routing, clawd_skills, clawd_gateway, clawd_security, clawd_moltbook | Same operations via POST /api/channels, POST /api/routing, POST /api/ask, etc. |
 | **Auth** | None (local) | CORS to 5180; Gateway token via backend env |
 | **Purpose** | AI assistants (MCP clients) | Human dashboard (React) |
@@ -62,7 +62,7 @@ The webapp does not duplicate MCP logic: it calls the same Gateway (and optional
 
 ## Data flow
 
-1. **MCP path**: Cursor/Claude → stdio → clawd-mcp → GatewayClient → OpenClaw Gateway (:18789). Optional: clawd_moltbook → Moltbook API; clawd_security + CLAWD_MOUNT_VBOX → virtualization-mcp.
+1. **MCP path**: Cursor/Claude → stdio → openclaw-mcp → GatewayClient → OpenClaw Gateway (:18789). Optional: clawd_moltbook → Moltbook API; clawd_security + CLAWD_MOUNT_VBOX → virtualization-mcp.
 
 2. **Webapp path**: Browser (:5180) → Vite proxy /api → webapp_api (:5181) → GatewayClient → OpenClaw Gateway. AI page: webapp_api → Ollama (:11434). Diagram/Statistics/Moltbook: no Gateway calls (Diagram: mermaid; Statistics: Gateway + routing fetch; Moltbook: localStorage).
 
@@ -78,6 +78,6 @@ The webapp does not duplicate MCP logic: it calls the same Gateway (and optional
 
 ## References
 
-- [README_CLAWD_MCP_TOOLS.md](README_CLAWD_MCP_TOOLS.md) – tool reference
+- [README_openclaw_mcp_TOOLS.md](README_openclaw_mcp_TOOLS.md) – tool reference
 - [README_WEBAPP.md](README_WEBAPP.md) – webapp pages and API endpoints
 - [SECURITY_HARDENING.md](SECURITY_HARDENING.md) – security patterns

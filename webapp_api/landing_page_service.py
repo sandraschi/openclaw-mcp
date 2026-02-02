@@ -1,7 +1,7 @@
 """
 Generate a premium static landing page site (hero, features, bio, download, donate, how it works, ecosystem).
 Adapted from meta-mcp generate_landing_page. Outputs to target_path/<project_slug>/www/ plus DEPLOY.md.
-Includes structured info/help/news for OpenClaw, clawd-mcp, Moltbook and links to high-quality reviewers.
+Includes structured info/help/news for OpenClaw, openclaw-mcp, Moltbook and links to high-quality reviewers.
 """
 
 from pathlib import Path
@@ -138,7 +138,7 @@ Your site is static HTML/CSS/JS. No build step. Upload the contents of this fold
 Upload the contents of `www` (all `.html`, `styles.css`, `script.js`) via FTP, SFTP, or your host's file manager. No build or server-side code required.
 """
 
-# Structured ecosystem info: OpenClaw, clawd-mcp, Moltbook, news, reviewers. Baked into generated site.
+# Structured ecosystem info: OpenClaw, openclaw-mcp, Moltbook, news, reviewers. Baked into generated site.
 ECOSYSTEM_OPENCLAW = {
     "name": "OpenClaw",
     "description": "Personal AI assistant runtime. Run 24/7 agents locally or in the cloud; connect to Moltbook, MCP, and your tools. Local-first, model-agnostic.",
@@ -149,11 +149,11 @@ ECOSYSTEM_OPENCLAW = {
         ("https://docs.clawd.bot/providers/ollama", "Ollama provider"),
     ],
 }
-ECOSYSTEM_CLAWD_MCP = {
-    "name": "clawd-mcp",
+ECOSYSTEM_OPENCLAW_MCP = {
+    "name": "openclaw-mcp",
     "description": "MCP server and webapp that bridge Cursor and Claude Desktop to OpenClaw and Moltbook. Dashboard for channels, routes, skills, Moltbook agent drafts, and starter landing pages. One place to manage your AI stack.",
     "links": [
-        ("https://github.com/sandraschi/clawd-mcp", "GitHub – sandraschi/clawd-mcp"),
+        ("https://github.com/sandraschi/openclaw-mcp", "GitHub – sandraschi/openclaw-mcp"),
     ],
 }
 ECOSYSTEM_MOLTBOOK = {
@@ -186,9 +186,9 @@ def _ecosystem_content_html() -> str:
         f'<li><a href="{url}" target="_blank" rel="noopener noreferrer" style="color: var(--primary-glow);">{label}</a></li>'
         for url, label in ECOSYSTEM_OPENCLAW["links"]
     )
-    clawd_links = "".join(
+    openclaw_mcp_links = "".join(
         f'<li><a href="{url}" target="_blank" rel="noopener noreferrer" style="color: var(--primary-glow);">{label}</a></li>'
-        for url, label in ECOSYSTEM_CLAWD_MCP["links"]
+        for url, label in ECOSYSTEM_OPENCLAW_MCP["links"]
     )
     moltbook_links = "".join(
         f'<li><a href="{url}" target="_blank" rel="noopener noreferrer" style="color: var(--primary-glow);">{label}</a></li>'
@@ -207,7 +207,7 @@ def _ecosystem_content_html() -> str:
     <div class="content-container">
         <div class="hero">
             <h1>Ecosystem</h1>
-            <p>OpenClaw, clawd-mcp, Moltbook – plus news and high-quality reviewers. Everything you need to get started and stay informed.</p>
+            <p>OpenClaw, openclaw-mcp, Moltbook – plus news and high-quality reviewers. Everything you need to get started and stay informed.</p>
         </div>
 
         {section(
@@ -216,8 +216,8 @@ def _ecosystem_content_html() -> str:
         )}
 
         {section(
-            ECOSYSTEM_CLAWD_MCP["name"] + " and webapp",
-            f'<p>{ECOSYSTEM_CLAWD_MCP["description"]}</p><ul class="footer-links" style="justify-content: flex-start; flex-wrap: wrap; gap: 0.5rem 1.5rem;">{clawd_links}</ul>'
+            ECOSYSTEM_OPENCLAW_MCP["name"] + " and webapp",
+            f'<p>{ECOSYSTEM_OPENCLAW_MCP["description"]}</p><ul class="footer-links" style="justify-content: flex-start; flex-wrap: wrap; gap: 0.5rem 1.5rem;">{openclaw_mcp_links}</ul>'
         )}
 
         {section(
@@ -242,11 +242,11 @@ def _ecosystem_content_html() -> str:
 def generate_landing_page(
     project_name: str,
     hero_title: str = "The Next Big Thing",
-    hero_subtitle: str = "Revolutionizing the way you do things. Built with OpenClaw and clawd-mcp.",
+    hero_subtitle: str = "Revolutionizing the way you do things. Built with OpenClaw and openclaw-mcp.",
     features: Sequence[str] | None = None,
     github_url: str = "https://github.com",
     author_name: str = "Developer",
-    author_bio: str = "I build things. Powered by OpenClaw, Moltbook, and clawd-mcp.",
+    author_bio: str = "I build things. Powered by OpenClaw, Moltbook, and openclaw-mcp.",
     donate_link: str = "#",
     target_path: str | Path = ".",
     hero_image_keyword: str = "blue,lobster",
@@ -321,7 +321,7 @@ def generate_landing_page(
 
         <div class="content-card">
             <h2>Architecture</h2>
-            <p>Built with OpenClaw, Moltbook, and clawd-mcp. We orchestrate agents and workflows, not just wrap APIs.</p>
+            <p>Built with OpenClaw, Moltbook, and openclaw-mcp. We orchestrate agents and workflows, not just wrap APIs.</p>
 
             <div class="tech-spec-grid">
                 <div class="spec-item">
@@ -334,7 +334,7 @@ def generate_landing_page(
                 </div>
                 <div class="spec-item">
                     <span class="spec-label">MCP</span>
-                    <span class="spec-value">clawd-mcp</span>
+                    <span class="spec-value">openclaw-mcp</span>
                 </div>
                 <div class="spec-item">
                     <span class="spec-label">License</span>
@@ -342,7 +342,7 @@ def generate_landing_page(
                 </div>
             </div>
 
-            <p>This starter was generated by clawd-mcp. Customize the HTML and deploy anywhere.</p>
+            <p>This starter was generated by openclaw-mcp. Customize the HTML and deploy anywhere.</p>
         </div>
     </div>
     """
@@ -398,7 +398,7 @@ def generate_landing_page(
         <div class="content-card">
             <h2>Hi, I'm {author_name}.</h2>
             <p>{author_bio}</p>
-            <p><strong>Stack:</strong> OpenClaw, Moltbook, clawd-mcp.</p>
+            <p><strong>Stack:</strong> OpenClaw, Moltbook, openclaw-mcp.</p>
             <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
                 <a href="{github_url}" class="btn-github" target="_blank" rel="noopener noreferrer">GitHub</a>
                 <a href="mailto:contact@example.com" class="btn-secondary">Email</a>

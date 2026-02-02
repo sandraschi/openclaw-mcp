@@ -1,4 +1,4 @@
-# clawd-mcp MCPB Package
+# openclaw-mcp MCPB Package
 
 **FastMCP 2.14+** server for OpenClaw and Moltbook ecosystem integration.
 
@@ -13,12 +13,12 @@
 
 ```
 mcpb/
-  manifest.json       # v0.2 manifest, entry_point src/clawd_mcp/server.py
+  manifest.json       # v0.2 manifest, entry_point src/openclaw_mcp/server.py
   assets/
     prompts/          # system.md, user.md, quick-start.md, configuration.md, troubleshooting.md, examples.json
     icon.png          # optional 256x256 PNG
   src/                # COPIED at build time from repo src/
-    clawd_mcp/        # server package
+    openclaw_mcp/     # server package
 ```
 
 ## Build (two steps)
@@ -32,7 +32,7 @@ Source must be present under `mcpb/src/` so the package contains full source. Co
 $mcpbSrc = "mcpb\src"
 if (Test-Path $mcpbSrc) { Remove-Item -Recurse -Force $mcpbSrc }
 New-Item -ItemType Directory -Force -Path $mcpbSrc | Out-Null
-Copy-Item -Path "src\clawd_mcp" -Destination "$mcpbSrc\clawd_mcp" -Recurse -Force
+Copy-Item -Path "src\openclaw_mcp" -Destination "$mcpbSrc\openclaw_mcp" -Recurse -Force
 ```
 
 **Step 2 – Pack**
@@ -40,7 +40,7 @@ Copy-Item -Path "src\clawd_mcp" -Destination "$mcpbSrc\clawd_mcp" -Recurse -Forc
 ```powershell
 # From repo root
 New-Item -ItemType Directory -Force -Path dist | Out-Null
-mcpb pack mcpb "dist/clawd-mcp-0.1.0.mcpb"
+mcpb pack mcpb "dist/openclaw-mcp-0.1.0.mcpb"
 ```
 
 Or use the script (does both steps):
@@ -51,12 +51,12 @@ Or use the script (does both steps):
 
 Or from just: `just mcpb`.
 
-Output: `dist/clawd-mcp-0.1.0.mcpb` (includes `src/clawd_mcp/`, `assets/prompts/`, `manifest.json`).
+Output: `dist/openclaw-mcp-0.1.0.mcpb` (includes `src/openclaw_mcp/`, `assets/prompts/`, `manifest.json`).
 
 ## Contents
 
 - **assets/prompts/** – system.md, user.md, quick-start.md, configuration.md, troubleshooting.md, examples.json.
-- **src/clawd_mcp/** – Server source (copied at build time).
+- **src/openclaw_mcp/** – Server source (copied at build time).
 
 ## References
 

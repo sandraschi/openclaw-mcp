@@ -5,7 +5,7 @@ from typing import Any
 
 import httpx
 
-from clawd_mcp.config import Settings
+from openclaw_mcp.config import Settings
 
 logger = logging.getLogger(__name__)
 

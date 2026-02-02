@@ -6,6 +6,6 @@ Use the **clawd_security** MCP tool for audit, skill scanning, config validation
 
 **Full guide**: [docs/SECURITY_HARDENING.md](docs/SECURITY_HARDENING.md) – threats, hardening checklist, Tailscale/tailnet caveats (transitive trust, user beware), Traefik patterns, and security patterns.
 
-**Removing OpenClaw**: [INSTALL.md#removing-openclaw](INSTALL.md#removing-openclaw) – steps to disconnect clawd-mcp and optionally uninstall OpenClaw. Webapp Security page and MCP tool `clawd_openclaw_disconnect` link there.
+**Removing OpenClaw**: [INSTALL.md#removing-openclaw](INSTALL.md#removing-openclaw) – steps to disconnect openclaw-mcp and optionally uninstall OpenClaw. Webapp Security page and MCP tool `clawd_openclaw_disconnect` link there.
 
 References: [Auth0 – Securing Moltbot](https://auth0.com/blog/five-step-guide-securing-moltbot-ai-agent/), [Intruder – Clawdbot Security Nightmare](https://www.intruder.io/blog/clawdbot-when-easy-ai-becomes-a-security-nightmare).

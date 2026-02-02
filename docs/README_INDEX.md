@@ -1,4 +1,4 @@
-# clawd-mcp Documentation Index
+# openclaw-mcp Documentation Index
 
 ## Overview
 
@@ -8,7 +8,7 @@
 | [../INSTALL.md](../INSTALL.md) | Install and run: MCP-only, webapp (API + frontend), one-shot scripts, config, logging, checks |
 | [ARCHITECTURE.md](ARCHITECTURE.md) | Repo layout, MCP vs webapp API, data flow |
 | [README_OPENCLAW.md](README_OPENCLAW.md) | OpenClaw platform, Gateway, channels, Pi agent, ClawHub |
-| [README_CLAWD_MCP_TOOLS.md](README_CLAWD_MCP_TOOLS.md) | clawd-mcp server, tools (agent, sessions, channels, routing, skills, gateway, security, moltbook) |
+| [README_OPENCLAW_MCP_TOOLS.md](README_OPENCLAW_MCP_TOOLS.md) | openclaw-mcp server, tools (agent, sessions, channels, routing, skills, gateway, security, moltbook) |
 | [README_WEBAPP.md](README_WEBAPP.md) | React dashboard: Startpage, AI, Channels, Routes, Diagram, Statistics, Moltbook (draft + register with Moltbook when OpenClaw installed), Integrations, Clawnews, Skills, Security, Generate (landing, OpenClaw env snippet, MCP config insert), Settings; OpenClaw install banner; Logger; API endpoints |
 | [README_MOLTBOOK.md](README_MOLTBOOK.md) | Moltbook site, skills, agent heartbeats |
 | [../SECURITY.md](../SECURITY.md) | Security summary and link to full guide |
@@ -20,7 +20,7 @@ Repo manifests (root): [../llms.txt](../llms.txt) (LLM-friendly manifest; Giting
 ## By topic
 
 - **Getting started**: [../README.md](../README.md), [../INSTALL.md](../INSTALL.md), [README_WEBAPP.md](README_WEBAPP.md) (Run, start scripts)
-- **MCP server and tools**: [README_CLAWD_MCP_TOOLS.md](README_CLAWD_MCP_TOOLS.md)
+- **MCP server and tools**: [README_OPENCLAW_MCP_TOOLS.md](README_OPENCLAW_MCP_TOOLS.md)
 - **Webapp and API**: [README_WEBAPP.md](README_WEBAPP.md) (pages, OpenClaw banner, Generate, Moltbook register, API endpoints, Diagram, Statistics, Logger)
 - **OpenClaw / Moltbook**: [README_OPENCLAW.md](README_OPENCLAW.md), [README_MOLTBOOK.md](README_MOLTBOOK.md)
 - **Security**: [../SECURITY.md](../SECURITY.md), [SECURITY_HARDENING.md](SECURITY_HARDENING.md)

@@ -1,13 +1,13 @@
-"""clawd-mcp FastMCP server entry point."""
+"""openclaw-mcp FastMCP server entry point."""
 
 import logging
 import os
 import sys
 
-from clawd_mcp.config import Settings
-from clawd_mcp.logging_config import setup_logging
-from clawd_mcp.mcp_instance import mcp
-from clawd_mcp.tools import agent, channels, gateway, moltbook, openclaw_remove, routing, security, sessions, skills  # noqa: F401 -- register tools
+from openclaw_mcp.config import Settings
+from openclaw_mcp.logging_config import setup_logging
+from openclaw_mcp.mcp_instance import mcp
+from openclaw_mcp.tools import agent, channels, gateway, moltbook, openclaw_remove, routing, security, sessions, skills, voice  # noqa: F401 -- register tools
 
 _settings = Settings()
 setup_logging(_settings)

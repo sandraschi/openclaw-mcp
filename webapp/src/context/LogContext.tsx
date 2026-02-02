@@ -31,11 +31,22 @@ interface LogContextValue {
 
 const LogContext = createContext<LogContextValue | null>(null);
 
-const defaultLogServerUrl =
-  typeof import.meta.env?.VITE_LOGS_API_URL === "string" &&
-  import.meta.env.VITE_LOGS_API_URL.length > 0
-    ? import.meta.env.VITE_LOGS_API_URL
-    : "http://127.0.0.1:8765/api/logs";
+function defaultLogsUrl(): string {
+  if (
+    typeof import.meta.env?.VITE_LOGS_API_URL === "string" &&
+    import.meta.env.VITE_LOGS_API_URL.length > 0
+  ) {
+    return import.meta.env.VITE_LOGS_API_URL;
+  }
+  const base =
+    typeof import.meta.env?.VITE_API_URL === "string" &&
+    import.meta.env.VITE_API_URL.length > 0
+      ? import.meta.env.VITE_API_URL.replace(/\/$/, "")
+      : "";
+  return base ? `${base}/api/logs` : "/api/logs";
+}
+
+const defaultLogServerUrl = defaultLogsUrl();
 
 let logId = 0;
 function nextId(): string {

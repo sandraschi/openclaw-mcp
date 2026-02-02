@@ -1,4 +1,4 @@
-# clawd-mcp Quick Start
+# openclaw-mcp Quick Start
 
 ## 1. Install OpenClaw (if not installed)
 
@@ -24,9 +24,9 @@ Or via daemon (after `openclaw onboard --install-daemon`):
 openclaw status
 ```
 
-## 3. Configure clawd-mcp
+## 3. Configure openclaw-mcp
 
-Create `.env` in clawd-mcp root:
+Create `.env` in openclaw-mcp root:
 
 ```
 OPENCLAW_GATEWAY_URL=http://127.0.0.1:18789
@@ -41,10 +41,10 @@ If Gateway uses loopback-only without auth, token may be omitted.
 ```json
 {
   "mcpServers": {
-    "clawd-mcp": {
+    "openclaw-mcp": {
       "command": "python",
-      "args": ["-m", "clawd_mcp"],
-      "cwd": "D:\\Dev\\repos\\clawd-mcp"
+      "args": ["-m", "openclaw_mcp"],
+      "cwd": "D:\\Dev\\repos\\openclaw-mcp"
     }
   }
 }
@@ -54,10 +54,10 @@ If Gateway uses loopback-only without auth, token may be omitted.
 ```json
 {
   "mcpServers": {
-    "clawd-mcp": {
+    "openclaw-mcp": {
       "command": "python",
-      "args": ["-m", "clawd_mcp"],
-      "cwd": "D:\\Dev\\repos\\clawd-mcp"
+      "args": ["-m", "openclaw_mcp"],
+      "cwd": "D:\\Dev\\repos\\openclaw-mcp"
     }
   }
 }

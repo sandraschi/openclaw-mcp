@@ -2,8 +2,8 @@
 
 import pytest
 
-from clawd_mcp.mcp_instance import mcp
-from clawd_mcp import __version__
+from openclaw_mcp.mcp_instance import mcp
+from openclaw_mcp import __version__
 
 
 def test_mcp_instance_exists() -> None:
@@ -18,4 +18,4 @@ def test_mcp_version() -> None:
 
 def test_mcp_has_name() -> None:
     """MCP instance should have name."""
-    assert mcp.name == "clawd-mcp"
+    assert mcp.name == "openclaw-mcp"

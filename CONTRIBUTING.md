@@ -1,4 +1,4 @@
-# Contributing to clawd-mcp
+# Contributing to openclaw-mcp
 
 ## Setup
 

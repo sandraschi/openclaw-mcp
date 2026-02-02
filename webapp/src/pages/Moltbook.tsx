@@ -3,7 +3,7 @@ import { MessageSquare, Save, ExternalLink, Send, CheckCircle } from "lucide-rea
 import { cn } from "../utils/cn";
 import { fetchOpenClawStatus, registerMoltbookAgent } from "../services/api";
 
-const STORAGE_KEY = "clawd-mcp-moltbook-agent-draft";
+const STORAGE_KEY = "openclaw-mcp-moltbook-agent-draft";
 
 interface AgentDraft {
   name: string;
@@ -288,3 +288,4 @@ export default function Moltbook() {
     </div>
   );
 }
+

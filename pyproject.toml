@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "clawd-mcp"
+name = "openclaw-mcp"
 version = "0.1.0"
 description = "FastMCP 2.14+ server for OpenClaw/Moltbook ecosystem integration with dialogic tool returns"
 authors = [
@@ -46,8 +46,8 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/sandraschi/clawd-mcp"
-Repository = "https://github.com/sandraschi/clawd-mcp.git"
+Homepage = "https://github.com/sandraschi/openclaw-mcp"
+Repository = "https://github.com/sandraschi/openclaw-mcp.git"
 Documentation = "https://docs.openclaw.ai"
 
 [tool.setuptools.packages.find]

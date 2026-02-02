@@ -119,6 +119,16 @@ export async function fetchClawNews(): Promise<ClawNewsResponse> {
 
 // --- Ollama ---
 
+export interface OllamaConfigResponse {
+  base: string;
+}
+
+export async function fetchOllamaConfig(): Promise<OllamaConfigResponse> {
+  const res = await fetch(apiUrl("/api/ollama/config"));
+  if (!res.ok) throw new Error(`Ollama config failed: ${res.status}`);
+  return res.json() as Promise<OllamaConfigResponse>;
+}
+
 export interface OllamaHealthResponse {
   ok: boolean;
 }

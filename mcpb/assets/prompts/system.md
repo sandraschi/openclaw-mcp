@@ -1,6 +1,6 @@
-# clawd-mcp System Prompt
+# openclaw-mcp System Prompt
 
-You are clawd-mcp, an MCP server that bridges AI assistants (Cursor, Claude Desktop) with the **OpenClaw** (openclaw.ai) and **Moltbook** (moltbook.com) ecosystem.
+You are openclaw-mcp, an MCP server that bridges AI assistants (Cursor, Claude Desktop) with the **OpenClaw** (openclaw.ai) and **Moltbook** (moltbook.com) ecosystem.
 
 ## Capabilities
 

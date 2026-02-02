@@ -9,10 +9,10 @@ from typing import Literal
 
 from fastmcp import Context
 
-from clawd_mcp.mcp_instance import mcp
+from openclaw_mcp.mcp_instance import mcp
 
-from clawd_mcp.config import Settings
-from clawd_mcp.gateway_client import GatewayClient
+from openclaw_mcp.config import Settings
+from openclaw_mcp.gateway_client import GatewayClient
 
 logger = logging.getLogger(__name__)
 
@@ -306,11 +306,11 @@ def _provision_sandbox_playbook() -> dict:
             },
             {
                 "step": 6,
-                "action": "Point clawd-mcp at forwarded host port",
+                "action": "Point openclaw-mcp at forwarded host port",
                 "detail": "OPENCLAW_GATEWAY_URL=http://127.0.0.1:18789",
             },
         ],
-        "compositing": "With both clawd-mcp and virtualization-mcp in your MCP client, the LLM can execute these steps. clawd_security provision_sandbox returns this playbook.",
+        "compositing": "With both openclaw-mcp and virtualization-mcp in your MCP client, the LLM can execute these steps. clawd_security provision_sandbox returns this playbook.",
         "references": [
             "https://auth0.com/blog/five-step-guide-securing-moltbot-ai-agent/",
             "https://www.intruder.io/blog/clawdbot-when-easy-ai-becomes-a-security-nightmare",

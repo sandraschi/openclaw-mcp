@@ -1,12 +1,12 @@
-# clawd-mcp Server and Tools
+# openclaw-mcp Server and Tools
 
 **FastMCP 2.14+** MCP server exposing OpenClaw and Moltbook operations to Cursor, Claude Desktop, and other MCP clients.
 
-**Webapp parity**: The webapp dashboard mirrors many tools via the webapp API (Channels page → POST /api/channels; Routes page → POST /api/routing; Integrations → /api/gateway/status, /api/skills). See [README_WEBAPP.md](README_WEBAPP.md).
+**Webapp parity**: The webapp dashboard mirrors many tools via the webapp API (Channels page -> POST /api/channels; Routes page -> POST /api/routing; Integrations -> /api/gateway/status, /api/skills). See [README_WEBAPP.md](README_WEBAPP.md).
 
 ## MCP client config
 
-Add clawd-mcp to your MCP client config (Cursor, Claude Desktop, Windsurf, Zed, etc.). Use the snippet in [INSTALL.md](../INSTALL.md#mcp-config-snippet) with `env.PYTHONPATH` set to `<REPO_ROOT>/src` and `PYTHONUNBUFFERED=1`; no `cwd` or editable install required. Client config file locations: [INSTALL.md#mcp-client-config-locations](../INSTALL.md#mcp-client-config-locations).
+Add openclaw-mcp to your MCP client config (Cursor, Claude Desktop, Windsurf, Zed, etc.). Use the snippet in [INSTALL.md](../INSTALL.md#mcp-config-snippet) with `env.PYTHONPATH` set to `<REPO_ROOT>/src` and `PYTHONUNBUFFERED=1`; no `cwd` or editable install required. Client config file locations: [INSTALL.md#mcp-client-config-locations](../INSTALL.md#mcp-client-config-locations).
 
 ## Architecture
 
@@ -14,7 +14,7 @@ Add clawd-mcp to your MCP client config (Cursor, Claude Desktop, Windsurf, Zed, 
 MCP Clients (Cursor, Claude Desktop)
     |
     v
-clawd-mcp (stdio)
+openclaw-mcp (stdio)
     |
     +-- clawd_agent     -> OpenClaw Gateway (Tools Invoke, Webhooks)
     +-- clawd_sessions  -> OpenClaw Gateway (sessions_*)
@@ -198,7 +198,7 @@ See [SECURITY_HARDENING.md](SECURITY_HARDENING.md).
 ## Run
 
 ```bash
-python -m clawd_mcp
+python -m openclaw_mcp
 ```
 
 Add to Cursor/Claude Desktop MCP config:
@@ -206,10 +206,13 @@ Add to Cursor/Claude Desktop MCP config:
 ```json
 {
   "mcpServers": {
-    "clawd-mcp": {
+    "openclaw-mcp": {
       "command": "python",
-      "args": ["-m", "clawd_mcp"],
-      "cwd": "D:\\Dev\\repos\\clawd-mcp"
+      "args": ["-m", "openclaw_mcp"],
+      "env": {
+        "PYTHONPATH": "D:/Dev/repos/openclaw-mcp/src",
+        "PYTHONUNBUFFERED": "1"
+      }
     }
   }
 }

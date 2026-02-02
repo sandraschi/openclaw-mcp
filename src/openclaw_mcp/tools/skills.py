@@ -6,7 +6,7 @@ from typing import Literal
 
 from fastmcp import Context
 
-from clawd_mcp.mcp_instance import mcp
+from openclaw_mcp.mcp_instance import mcp
 
 logger = logging.getLogger(__name__)
 

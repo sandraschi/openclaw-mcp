@@ -1,7 +1,7 @@
 """
-HTTP server that serves clawd-mcp log file for the webapp Logger modal.
+HTTP server that serves openclaw-mcp log file for the webapp Logger modal.
 
-Run: python -m clawd_mcp.serve_logs
+Run: python -m openclaw_mcp.serve_logs
 Serves GET /api/logs?tail=500 with CORS. Default port 8765 (CLAWD_LOG_SERVER_PORT).
 """
 
@@ -11,7 +11,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
-from clawd_mcp.logging_config import get_log_file_path
+from openclaw_mcp.logging_config import get_log_file_path
 
 
 def tail_log_lines(path: Path, n: int = 500) -> list[dict]:

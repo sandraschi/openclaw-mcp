@@ -1,12 +1,12 @@
-# clawd-mcp
+# openclaw-mcp
 
-[![Status](https://img.shields.io/badge/status-alpha-orange)](https://github.com/sandraschi/clawd-mcp)
+[![Status](https://img.shields.io/badge/status-alpha-orange)](https://github.com/sandraschi/openclaw-mcp)
 [![OpenClaw](https://img.shields.io/badge/OpenClaw-ecosystem-blue)](https://openclaw.ai)
 [![FastMCP](https://img.shields.io/badge/FastMCP-2.14+-blue)](https://github.com/jlowin/fastmcp)
 [![Python](https://img.shields.io/badge/Python-3.11+-green)](https://python.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**MCP server + webapp** that bridge Cursor and Claude Desktop to **OpenClaw** and **Moltbook**. clawd-mcp *uses* those platforms (Gateway, APIs); it does not implement or replace them. Alpha. Ingest for LLMs: [gitingest.com/sandraschi/clawd-mcp](https://gitingest.com/sandraschi/clawd-mcp).
+**MCP server + webapp** that bridge Cursor and Claude Desktop to **OpenClaw** and **Moltbook**. openclaw-mcp *uses* those platforms (Gateway, APIs); it does not implement or replace them. Alpha. Ingest for LLMs: [gitingest.com/sandraschi/openclaw-mcp](https://gitingest.com/sandraschi/openclaw-mcp).
 
 ## What this repo is
 
@@ -24,11 +24,11 @@ One place to run agents, manage channels/routes/skills, and use Moltbook; OpenCl
 
 ## Repo layout
 
-- **src/clawd_mcp/** – MCP server and tools
+- **src/openclaw_mcp/** – MCP server and tools
 - **webapp/** – React dashboard (port 5180)
 - **webapp_api/** – FastAPI backend (port 5181)
 - **scripts/** – install.ps1, install.bat, start.ps1, start.bat, check.ps1, serve_logs.ps1, mcpb-build.ps1
-- **snippets/** – MCP config snippet (snippets/mcp-config-clawd-mcp.json); see [INSTALL.md](INSTALL.md) and [mcp-central-docs pattern](https://github.com/sandraschi/mcp-central-docs/blob/main/docs/patterns/MCP_CLIENT_CONFIG_SNIPPETS.md)
+- **snippets/** – MCP config snippet (snippets/mcp-config-openclaw-mcp.json); see [INSTALL.md](INSTALL.md) and [mcp-central-docs pattern](https://github.com/sandraschi/mcp-central-docs/blob/main/docs/patterns/MCP_CLIENT_CONFIG_SNIPPETS.md)
 
 [Architecture](docs/ARCHITECTURE.md) – data flow, MCP vs API.
 
@@ -41,7 +41,7 @@ One place to run agents, manage channels/routes/skills, and use Moltbook; OpenCl
 | [INSTALL.md](INSTALL.md) | Install, run, config, checks |
 | [docs/README_INDEX.md](docs/README_INDEX.md) | Doc index |
 | [docs/README_WEBAPP.md](docs/README_WEBAPP.md) | Webapp pages, API, Logger |
-| [docs/README_CLAWD_MCP_TOOLS.md](docs/README_CLAWD_MCP_TOOLS.md) | MCP tools |
+| [docs/README_OPENCLAW_MCP_TOOLS.md](docs/README_OPENCLAW_MCP_TOOLS.md) | MCP tools |
 | [docs/README_OPENCLAW.md](docs/README_OPENCLAW.md) | OpenClaw (external) |
 | [docs/README_MOLTBOOK.md](docs/README_MOLTBOOK.md) | Moltbook (external) |
 | [docs/HOW_THIS_WAS_MADE.md](docs/HOW_THIS_WAS_MADE.md) | How this was made (vibecode, Cursor, one day) |
@@ -56,7 +56,7 @@ OpenClaw has major security risks. Use **clawd_security**; prefer VM and loopbac
 | File | Triggers | Purpose |
 |------|----------|---------|
 | **glama.json** | [Glama](https://glama.ai) GitHub scraper | MCP server listing: claim ownership, metadata, Docker, usage. Requires `$schema` + `maintainers` (GitHub usernames). Re-run claim flow on Glama after changes. |
-| **llms.txt** | [Gitingest](https://gitingest.com), [llmstxt.org](https://llmstxt.org) | LLM-friendly manifest: H1 + blockquote summary + ## sections with links. Improves repo ingestion for LLMs (e.g. `gitingest.com/sandraschi/clawd-mcp`). |
+| **llms.txt** | [Gitingest](https://gitingest.com), [llmstxt.org](https://llmstxt.org) | LLM-friendly manifest: H1 + blockquote summary + ## sections with links. Improves repo ingestion for LLMs (e.g. `gitingest.com/sandraschi/openclaw-mcp`). |
 
 Other scrapers: no extra files needed. Gitingest ingests the repo (replace `github.com` with `gitingest.com` in the repo URL); llms.txt gives it a curated entry point. Glama is the main MCP-directory scraper that uses glama.json; others (e.g. Cursor’s MCP discovery) may crawl GitHub without a manifest.
 

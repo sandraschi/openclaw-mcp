@@ -1,10 +1,10 @@
-# clawd-mcp Webapp API
+# openclaw-mcp Webapp API
 
 FastAPI backend for the webapp: proxy to OpenClaw Gateway (Ask), gateway status, skills list, clawnews.
 
 ## Run
 
-From repo root with `PYTHONPATH=src` so `clawd_mcp` is importable:
+From repo root with `PYTHONPATH=src` so `openclaw_mcp` is importable:
 
 ```powershell
 # Install optional deps

@@ -1,4 +1,4 @@
-# clawd-mcp Configuration
+# openclaw-mcp Configuration
 
 ## Environment Variables
 

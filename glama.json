@@ -1,4 +1,31 @@
 {
   "$schema": "https://glama.ai/mcp/schemas/server.json",
-  "maintainers": ["sandraschi"]
+  "maintainers": ["sandraschi"],
+  "name": "openclaw-mcp",
+  "description": "MCP server + webapp bridging Cursor and Claude Desktop to OpenClaw and Moltbook. FastMCP 2.14+ tools: agent, sessions, channels, routing, skills, gateway, security, moltbook.",
+  "type": "mcp-server + webapp",
+  "status": "alpha",
+  "framework": "FastMCP",
+  "tools": 9,
+  "tool_list": [
+    "clawd_agent",
+    "clawd_gateway",
+    "clawd_channels",
+    "clawd_moltbook",
+    "clawd_routing",
+    "clawd_security",
+    "clawd_sessions",
+    "clawd_skills",
+    "clawd_openclaw_disconnect"
+  ],
+  "transport": ["stdio"],
+  "keywords": [
+    "mcp",
+    "openclaw",
+    "moltbook",
+    "clawdbot",
+    "fastmcp",
+    "cursor",
+    "claude-desktop"
+  ]
 }

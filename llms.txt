@@ -1,26 +1,26 @@
-# clawd-mcp
+# openclaw-mcp
 
 > MCP server and React webapp that bridge Cursor and Claude Desktop to OpenClaw and Moltbook. Uses OpenClaw Gateway and Moltbook API; does not implement or replace them. Alpha.
 
-Ingest for LLMs: gitingest.com/sandraschi/clawd-mcp (Summary, Directory Structure, Files Content). This repo: (1) FastMCP 2.14+ stdio server – tools agent, sessions, channels, routing, skills, gateway, security, moltbook. (2) React dashboard (5180) + FastAPI (5181) – Startpage, AI/Ollama, Channels, Routes, Diagram, Statistics, Moltbook, Starter page (landing-site generator), Settings. Install: INSTALL.md. Run MCP: `python -m clawd_mcp`. Run webapp: `uvicorn webapp_api.main:app --port 5181` then `cd webapp && npm run dev`; or `scripts/start.ps1` (Windows).
+Ingest for LLMs: gitingest.com/sandraschi/openclaw-mcp (Summary, Directory Structure, Files Content). This repo: (1) FastMCP 2.14+ stdio server – tools agent, sessions, channels, routing, skills, gateway, security, moltbook. (2) React dashboard (5180) + FastAPI (5181) – Startpage, AI/Ollama, Channels, Routes, Diagram, Statistics, Moltbook, Starter page (landing-site generator), Settings. Install: INSTALL.md. Run MCP: `python -m openclaw_mcp`. Run webapp: `uvicorn webapp_api.main:app --port 5181` then `cd webapp && npm run dev`; or `scripts/start.ps1` (Windows).
 
 ## Core
 
-- [README](https://raw.githubusercontent.com/sandraschi/clawd-mcp/main/README.md): What this repo is, install pointer, layout, docs, repo manifests
-- [INSTALL.md](https://raw.githubusercontent.com/sandraschi/clawd-mcp/main/INSTALL.md): Pip, webapp (API + frontend), one-shot scripts, config, checks
+- [README](https://raw.githubusercontent.com/sandraschi/openclaw-mcp/main/README.md): What this repo is, install pointer, layout, docs, repo manifests
+- [INSTALL.md](https://raw.githubusercontent.com/sandraschi/openclaw-mcp/main/INSTALL.md): Pip, webapp (API + frontend), one-shot scripts, config, checks
 
 ## MCP & Webapp
 
-- [clawd-mcp tools](https://raw.githubusercontent.com/sandraschi/clawd-mcp/main/docs/README_CLAWD_MCP_TOOLS.md): MCP server, portmanteau tools
-- [Webapp](https://raw.githubusercontent.com/sandraschi/clawd-mcp/main/docs/README_WEBAPP.md): Dashboard pages, API endpoints, OpenClaw banner, Starter page, Logger
+- [openclaw-mcp tools](https://raw.githubusercontent.com/sandraschi/openclaw-mcp/main/docs/README_OPENCLAW_MCP_TOOLS.md): MCP server, portmanteau tools
+- [Webapp](https://raw.githubusercontent.com/sandraschi/openclaw-mcp/main/docs/README_WEBAPP.md): Dashboard pages, API endpoints, OpenClaw banner, Starter page, Logger
 
 ## External (OpenClaw, Moltbook)
 
-- [OpenClaw](https://raw.githubusercontent.com/sandraschi/clawd-mcp/main/docs/README_OPENCLAW.md): Platform we use; Gateway, channels
-- [Moltbook](https://raw.githubusercontent.com/sandraschi/clawd-mcp/main/docs/README_MOLTBOOK.md): Social network for agents we use
+- [OpenClaw](https://raw.githubusercontent.com/sandraschi/openclaw-mcp/main/docs/README_OPENCLAW.md): Platform we use; Gateway, channels
+- [Moltbook](https://raw.githubusercontent.com/sandraschi/openclaw-mcp/main/docs/README_MOLTBOOK.md): Social network for agents we use
 
 ## Optional
 
-- [Architecture](https://raw.githubusercontent.com/sandraschi/clawd-mcp/main/docs/ARCHITECTURE.md): Repo layout, MCP vs API data flow
-- [Security](https://raw.githubusercontent.com/sandraschi/clawd-mcp/main/SECURITY.md): Threats, hardening
-- [Doc index](https://raw.githubusercontent.com/sandraschi/clawd-mcp/main/docs/README_INDEX.md): Full doc index
+- [Architecture](https://raw.githubusercontent.com/sandraschi/openclaw-mcp/main/docs/ARCHITECTURE.md): Repo layout, MCP vs API data flow
+- [Security](https://raw.githubusercontent.com/sandraschi/openclaw-mcp/main/SECURITY.md): Threats, hardening
+- [Doc index](https://raw.githubusercontent.com/sandraschi/openclaw-mcp/main/docs/README_INDEX.md): Full doc index

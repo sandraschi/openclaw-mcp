@@ -1,4 +1,4 @@
-# clawd-mcp Troubleshooting
+# openclaw-mcp Troubleshooting
 
 ## Gateway Unreachable
 

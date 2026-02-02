@@ -1,4 +1,4 @@
-"""Configuration for clawd-mcp."""
+"""Configuration for openclaw-mcp."""
 
 from pathlib import Path
 
@@ -7,7 +7,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    """clawd-mcp settings."""
+    """openclaw-mcp settings."""
 
     model_config = SettingsConfigDict(
         env_prefix="OPENCLAW_",
@@ -40,7 +40,7 @@ class Settings(BaseSettings):
         description="OpenClaw workspace root (default: ~/.openclaw/workspace)",
     )
     log_dir: Path = Field(
-        default_factory=lambda: Path.home() / ".clawd-mcp" / "logs",
+        default_factory=lambda: Path.home() / ".openclaw-mcp" / "logs",
         description="Log directory. Set OPENCLAW_LOG_DIR to override.",
     )
     log_level: str = Field(

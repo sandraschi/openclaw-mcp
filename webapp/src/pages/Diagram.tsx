@@ -36,7 +36,7 @@ flowchart LR
     Cursor[Cursor]
     Claude[Claude Desktop]
   end
-  subgraph clawd["clawd-mcp"]
+  subgraph clawd["openclaw-mcp"]
     MCP[FastMCP stdio]
     MCP --> Agent[clawd_agent]
     MCP --> Sessions[clawd_sessions]
@@ -82,7 +82,7 @@ flowchart TB
     Browser[Browser :5180]
     IDE[Cursor / Claude]
   end
-  subgraph clawd_mcp["clawd-mcp"]
+  subgraph openclaw_mcp["openclaw-mcp"]
     Webapp[Webapp React]
     API[Webapp API :5181]
     MCP[MCP Server stdio]
@@ -110,7 +110,7 @@ flowchart TB
 
 const diagrams = [
   { id: "diag-openclaw", title: "OpenClaw system", code: DIAGRAM_OPENCLAW },
-  { id: "diag-clawd-webapp", title: "clawd-mcp and webapp", code: DIAGRAM_CLAWD_WEBAPP },
+  { id: "diag-clawd-webapp", title: "openclaw-mcp and webapp", code: DIAGRAM_CLAWD_WEBAPP },
   { id: "diag-full", title: "Full system", code: DIAGRAM_FULL },
 ];
 
@@ -152,7 +152,7 @@ export default function Diagram() {
           Diagrams
         </h1>
         <p className="mt-2 text-foreground-secondary">
-          Mermaid diagrams of the OpenClaw system and clawd-mcp + webapp connections.
+          Mermaid diagrams of the OpenClaw system and openclaw-mcp + webapp connections.
         </p>
       </section>
 
@@ -188,3 +188,4 @@ export default function Diagram() {
     </div>
   );
 }
+

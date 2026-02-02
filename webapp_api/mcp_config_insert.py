@@ -1,6 +1,6 @@
 """
-Insert clawd-mcp snippet into MCP client config files. Creates backup before write.
-Idempotent: skips if clawd-mcp key already present (no multi-insert).
+Insert openclaw-mcp snippet into MCP client config files. Creates backup before write.
+Idempotent: skips if openclaw-mcp key already present (no multi-insert).
 """
 
 import json
@@ -9,7 +9,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-SERVER_KEY = "clawd-mcp"
+SERVER_KEY = "openclaw-mcp"
 
 # Client id -> (config path relative to base, key path to mcpServers object as tuple)
 # Base: APPDATA or USERPROFILE per client
@@ -76,7 +76,7 @@ def make_snippet(repo_root: Path) -> dict[str, Any]:
     root_str = repo_root.as_posix()
     return {
         "command": "python",
-        "args": ["-m", "clawd_mcp"],
+        "args": ["-m", "openclaw_mcp"],
         "env": {
             "PYTHONPATH": f"{root_str}/src",
             "PYTHONUNBUFFERED": "1",
@@ -89,14 +89,14 @@ def insert_into_config(
     repo_root: Path,
 ) -> dict[str, Any]:
     """
-    Read config, backup if needed, add clawd-mcp only if not present, write.
+    Read config, backup if needed, add openclaw-mcp only if not present, write.
     Returns { "updated": bool, "skipped": bool, "backup_path": str | None, "error": str | None }.
     """
     path = _resolve_path(client_id)
     if not path or not path.parent.exists():
         return {"updated": False, "skipped": False, "backup_path": None, "error": "Config path not found"}
     if not path.exists():
-        # Create parent and write new file with only clawd-mcp
+        # Create parent and write new file with only openclaw-mcp
         path.parent.mkdir(parents=True, exist_ok=True)
         servers_key = _get_servers_key(client_id)
         data: dict[str, Any] = {servers_key: {SERVER_KEY: make_snippet(repo_root)}}

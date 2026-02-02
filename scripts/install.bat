@@ -1,5 +1,5 @@
 @echo off
-REM clawd-mcp install - pip install from source, npm install in webapp
+REM openclaw-mcp install - pip install from source, npm install in webapp
 REM Run from repo root. One-time after clone.
 
 cd /d "%~dp0\.."

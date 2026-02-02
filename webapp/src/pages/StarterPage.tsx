@@ -43,13 +43,13 @@ export default function StarterPage() {
   const [projectName, setProjectName] = useState("India Claw");
   const [heroTitle, setHeroTitle] = useState("India Claw");
   const [heroSubtitle, setHeroSubtitle] = useState(
-    "Your AI presence on the web. Built with OpenClaw and clawd-mcp."
+    "Your AI presence on the web. Built with OpenClaw and openclaw-mcp."
   );
   const [featuresText, setFeaturesText] = useState(DEFAULT_FEATURES.join("\n"));
   const [githubUrl, setGithubUrl] = useState("https://github.com");
   const [authorName, setAuthorName] = useState("Developer");
   const [authorBio, setAuthorBio] = useState(
-    "I build things. Powered by OpenClaw, Moltbook, and clawd-mcp."
+    "I build things. Powered by OpenClaw, Moltbook, and openclaw-mcp."
   );
   const [donateLink, setDonateLink] = useState("#");
   const [heroImageKeyword, setHeroImageKeyword] = useState("blue lobster");
@@ -87,7 +87,7 @@ export default function StarterPage() {
     const url = gatewayUrl.trim() || "http://127.0.0.1:18789";
     const token = gatewayToken.trim();
     const envLines = [
-      "# OpenClaw Gateway (clawd-mcp, webapp)",
+      "# OpenClaw Gateway (openclaw-mcp, webapp)",
       `OPENCLAW_GATEWAY_URL=${url}`,
     ];
     if (token) {
@@ -424,10 +424,10 @@ export default function StarterPage() {
           MCP config snippet
         </h2>
         <p className="mt-2 rounded border border-amber-500/50 bg-amber-500/10 px-3 py-2 text-sm text-foreground-secondary">
-          Use with caution. This will modify your MCP client config file(s) and create timestamped backups. If clawd-mcp is already present, it will not be added again (no multi-insert).
+          Use with caution. This will modify your MCP client config file(s) and create timestamped backups. If openclaw-mcp is already present, it will not be added again (no multi-insert).
         </p>
         <p className="mt-2 text-sm text-foreground-secondary">
-          Select one or more clients; the clawd-mcp snippet (PYTHONPATH to this repo) will be inserted into their config. Restart the client after inserting.
+          Select one or more clients; the openclaw-mcp snippet (PYTHONPATH to this repo) will be inserted into their config. Restart the client after inserting.
         </p>
         <div className="mt-4 flex flex-wrap gap-4">
           {mcpClients.map((c) => (
@@ -511,3 +511,4 @@ export default function StarterPage() {
     </div>
   );
 }
+

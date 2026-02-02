@@ -5,10 +5,10 @@ from typing import Literal
 
 from fastmcp import Context
 
-from clawd_mcp.mcp_instance import mcp
+from openclaw_mcp.mcp_instance import mcp
 
-from clawd_mcp.gateway_client import GatewayClient
-from clawd_mcp.config import Settings
+from openclaw_mcp.gateway_client import GatewayClient
+from openclaw_mcp.config import Settings
 
 logger = logging.getLogger(__name__)
 
@@ -43,7 +43,7 @@ async def clawd_agent(
 
     try:
         if operation == "wake":
-            text = message or "Wake triggered via clawd-mcp"
+            text = message or "Wake triggered via openclaw-mcp"
             result = await client.hooks_wake(text=text, mode="now")
             return result
 

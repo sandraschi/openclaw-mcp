@@ -49,6 +49,7 @@ RPC-mode coding agent ([badlogic/pi-mono](https://github.com/badlogic/pi-mono)).
 - **webhooks**: Inbound triggers
 - **Gmail Pub/Sub**: Email events
 - **sessions**: Agent-to-agent (`sessions_list`, `sessions_history`, `sessions_send`)
+- **tts**: Text-to-speech (ElevenLabs, OpenAI, or Edge TTS); returns MEDIA path. See [OpenClaw TTS](https://docs.clawd.bot/tts).
 
 ### Skills
 
@@ -61,6 +62,8 @@ curl -fsSL https://openclaw.ai/install.sh | bash
 # or
 npm i -g openclaw
 ```
+
+### openclaw-mcp integration
 
 ## Configuration
 
@@ -82,6 +85,16 @@ npm i -g openclaw
 - "AI as teammate, not tool" — lycfyi
 - Karpathy: "Love oracle and Claw"
 
+## Voice (TTS / STT) – piggybacking
+
+openclaw-mcp can use OpenClaw’s TTS (and, where exposed, STT) via the Gateway.
+
+**TTS (text-to-speech)**  
+OpenClaw has a Gateway tool `tts` that converts text to speech (ElevenLabs, OpenAI, or Edge TTS). Invoke it with `POST /tools/invoke`: `tool: "tts"`, `args: { text: "..." }`. The result includes a MEDIA path to the generated audio. openclaw-mcp exposes this as the MCP tool `clawd_voice` (operation `tts`, argument `text`). Configure TTS in OpenClaw: `messages.tts` in `~/.openclaw/openclaw.json`; see [OpenClaw TTS](https://docs.clawd.bot/tts).
+
+**STT (speech-to-text)**  
+OpenClaw handles voice input in its own pipeline (voice notes, Talk mode, Voice Wake). Transcription hooks and node audio are documented under [Audio and voice notes](https://docs.clawd.bot/nodes/audio) and [Talk mode](https://docs.clawd.bot/nodes/talk). If the Gateway exposes an STT tool via `/tools/invoke`, openclaw-mcp can add a similar proxy later.
+
 ## References
 
 - [openclaw.ai](https://openclaw.ai)
@@ -89,4 +102,6 @@ npm i -g openclaw
 - [docs.clawd.bot](https://docs.clawd.bot)
 - [clawhub.com](https://clawhub.com)
 - [Tools Invoke API](https://docs.clawd.bot/gateway/tools-invoke-http-api)
+- [OpenClaw TTS](https://docs.clawd.bot/tts)
+- [Audio and voice notes](https://docs.clawd.bot/nodes/audio)
 - [Webhooks](https://docs.clawd.bot/automation/webhook)

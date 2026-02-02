@@ -1,4 +1,4 @@
-"""Structured logging configuration for clawd-mcp."""
+"""Structured logging configuration for openclaw-mcp."""
 
 import json
 import logging
@@ -7,7 +7,7 @@ import sys
 from datetime import UTC, datetime
 from pathlib import Path
 
-from clawd_mcp.config import Settings
+from openclaw_mcp.config import Settings
 
 
 def _structured_record(record: logging.LogRecord) -> str:
@@ -56,7 +56,7 @@ def setup_logging(settings: Settings | None = None) -> None:
     level = getattr(logging, settings.log_level.upper(), logging.INFO)
     log_dir = Path(settings.log_dir)
     log_dir.mkdir(parents=True, exist_ok=True)
-    log_file = log_dir / "clawd-mcp.log"
+    log_file = log_dir / "openclaw-mcp.log"
 
     root = logging.getLogger()
     root.setLevel(level)
@@ -80,11 +80,11 @@ def setup_logging(settings: Settings | None = None) -> None:
 
     root.info(
         "Logging configured",
-        extra={"tool": "clawd_mcp", "operation": "startup", "log_file": str(log_file)},
+        extra={"tool": "openclaw_mcp", "operation": "startup", "log_file": str(log_file)},
     )
 
 
 def get_log_file_path(settings: Settings | None = None) -> Path:
     """Return the path to the current log file (for log server)."""
     settings = settings or Settings()
-    return Path(settings.log_dir) / "clawd-mcp.log"
+    return Path(settings.log_dir) / "openclaw-mcp.log"

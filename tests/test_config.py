@@ -1,8 +1,8 @@
-"""Tests for clawd_mcp.config."""
+"""Tests for openclaw_mcp.config."""
 
 import pytest
 
-from clawd_mcp.config import Settings
+from openclaw_mcp.config import Settings
 
 
 def test_settings_defaults() -> None:

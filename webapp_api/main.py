@@ -1,5 +1,5 @@
 """
-FastAPI backend for clawd-mcp webapp: proxy to OpenClaw Gateway, Ollama (models, generate, chat), skills, clawnews.
+FastAPI backend for openclaw-mcp webapp: proxy to OpenClaw Gateway, Ollama (models, generate, chat), skills, clawnews.
 
 Run from repo root with PYTHONPATH=src:
   uvicorn webapp_api.main:app --reload --port 5181
@@ -18,10 +18,12 @@ from pydantic import BaseModel
 OLLAMA_BASE = os.environ.get("OLLAMA_BASE", "http://localhost:11434")
 
 # Requires PYTHONPATH=src
-from clawd_mcp.config import Settings
-from clawd_mcp.gateway_client import GatewayClient
-from clawd_mcp.moltbook_client import MoltbookClient
-from clawd_mcp.tools.routing import _routing_config_fallback
+from openclaw_mcp.config import Settings
+from openclaw_mcp.gateway_client import GatewayClient
+from openclaw_mcp.logging_config import get_log_file_path
+from openclaw_mcp.moltbook_client import MoltbookClient
+from openclaw_mcp.serve_logs import tail_log_lines
+from openclaw_mcp.tools.routing import _routing_config_fallback
 
 from webapp_api.ollama_client import (
     load_preprompt,
@@ -35,7 +37,7 @@ from webapp_api.ollama_client import (
 from webapp_api.landing_page_service import generate_landing_page
 from webapp_api.mcp_config_insert import insert_into_config, list_clients
 
-app = FastAPI(title="clawd-mcp Webapp API", version="0.1.0")
+app = FastAPI(title="openclaw-mcp Webapp API", version="0.1.0")
 
 # Serve generated landing pages via HTTP
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -68,6 +70,15 @@ class AskResponse(BaseModel):
 @app.get("/api/health")
 def health():
     return {"status": "ok"}
+
+
+@app.get("/api/logs")
+def api_logs(tail: int = 500):
+    """Serve log file tail for Logger modal. Same data as serve_logs; no separate log server needed."""
+    tail = max(1, min(10000, tail))
+    log_path = get_log_file_path()
+    entries = tail_log_lines(log_path, n=tail)
+    return {"entries": entries, "source": str(log_path)}
 
 
 @app.get("/api/openclaw/status")
@@ -243,6 +254,12 @@ class DeleteRequest(BaseModel):
     name: str
 
 
+@app.get("/api/ollama/config")
+def ollama_config():
+    """Return Ollama base URL the API uses (for debugging). Set OLLAMA_BASE if Ollama is not on localhost:11434."""
+    return {"base": OLLAMA_BASE}
+
+
 @app.get("/api/ollama/health")
 async def ollama_health_route():
     """Check if Ollama is reachable."""
@@ -375,11 +392,11 @@ async def channels_api(req: ChannelsRequest):
 class LandingPageRequest(BaseModel):
     project_name: str
     hero_title: str = "The Next Big Thing"
-    hero_subtitle: str = "Revolutionizing the way you do things. Built with OpenClaw and clawd-mcp."
+    hero_subtitle: str = "Revolutionizing the way you do things. Built with OpenClaw and openclaw-mcp."
     features: list[str] = []
     github_url: str = "https://github.com"
     author_name: str = "Developer"
-    author_bio: str = "I build things. Powered by OpenClaw, Moltbook, and clawd-mcp."
+    author_bio: str = "I build things. Powered by OpenClaw, Moltbook, and openclaw-mcp."
     donate_link: str = "#"
     hero_image_keyword: str = "technology"
     include_pictures: bool = True
@@ -434,7 +451,7 @@ class McpConfigInsertRequest(BaseModel):
 
 @app.post("/api/mcp-config/insert")
 def mcp_config_insert_api(req: McpConfigInsertRequest):
-    """Insert clawd-mcp snippet into selected client configs. Backs up originals; skips if already present."""
+    """Insert openclaw-mcp snippet into selected client configs. Backs up originals; skips if already present."""
     repo_root = REPO_ROOT
     updated: list[str] = []
     skipped: list[str] = []

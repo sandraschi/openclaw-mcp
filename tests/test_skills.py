@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from clawd_mcp.mcp_instance import mcp
+from openclaw_mcp.mcp_instance import mcp
 
 
 def _extract_tool_result(result: object) -> dict:

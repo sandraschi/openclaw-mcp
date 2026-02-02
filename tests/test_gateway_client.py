@@ -1,4 +1,4 @@
-"""Tests for clawd_mcp.gateway_client."""
+"""Tests for openclaw_mcp.gateway_client."""
 
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -6,8 +6,8 @@ import httpx
 import pytest
 import pytest_asyncio
 
-from clawd_mcp.config import Settings
-from clawd_mcp.gateway_client import GatewayClient
+from openclaw_mcp.config import Settings
+from openclaw_mcp.gateway_client import GatewayClient
 
 
 @pytest_asyncio.fixture

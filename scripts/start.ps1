@@ -1,4 +1,4 @@
-# clawd-mcp start script - webapp API (5181) and webapp dev server (5180)
+# openclaw-mcp start script - webapp API (5181) and webapp dev server (5180)
 # Run from repo root or scripts/. Kills existing processes on 5181/5180, then opens two windows.
 
 $ErrorActionPreference = "Stop"

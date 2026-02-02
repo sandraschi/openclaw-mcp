@@ -6,23 +6,33 @@ import {
   fetchOllamaTags,
   ollamaGenerate,
   ollamaChat,
-  ollamaPull,
-  ollamaDelete,
   type OllamaModelInfo,
   type ChatMessagePayload,
 } from "../services/api";
 import { useLog } from "../context/LogContext";
 
 const SHORTCUTS = [
-  { label: "Explain last log", prompt: "Summarize the last 20 lines of the clawd-mcp log file and explain any errors or warnings." },
+  { label: "Explain last log", prompt: "Summarize the last 20 lines of the openclaw-mcp log file and explain any errors or warnings." },
   { label: "Summarize security findings", prompt: "List and briefly explain the main security recommendations for running OpenClaw (gateway binding, skills, sandbox)." },
   { label: "OpenClaw vs Moltbook", prompt: "In 3 short bullets: what is OpenClaw, what is Moltbook, and how do they relate?" },
+];
+
+const PERSONALITIES: { id: string; label: string; system: string | null }[] = [
+  { id: "normal", label: "Normal (OpenClaw/Moltbook helper)", system: null },
+  { id: "concise", label: "Concise (short answers)", system: "You are a helpful assistant. Answer in one to three short sentences. No fluff." },
+  { id: "pirate", label: "Pirate captain", system: "You are a pirate captain. Reply in character with nautical slang, 'arr', and maritime humor. Stay helpful." },
+  { id: "mork", label: "Mork from Ork", system: "You are Mork from Ork (Mork & Mindy). Reply in character: say 'Nanu nanu', speak in Orkan style, be whimsical and kind. Stay helpful." },
+  { id: "friar", label: "Medieval friar (Latin)", system: "You are a medieval friar. Reply in character, mostly in Latin (with brief English when needed). Be scholarly and gentle. Stay helpful." },
+  { id: "japanese_cop", label: "Japanese cop (Japanese)", system: "You are a Japanese police officer. Reply in character, speaking primarily in Japanese (use romaji or short English glosses). Be formal and helpful." },
+  { id: "shakespeare", label: "Shakespeare", system: "You are William Shakespeare. Reply in character, in early modern English verse or prose. Be witty and helpful." },
+  { id: "robot", label: "Friendly robot", system: "You are a friendly robot. Reply in character: beep, use short mechanical phrasing, stay kind and helpful." },
 ];
 
 export default function AI() {
   const [ollamaOk, setOllamaOk] = useState<boolean | null>(null);
   const [models, setModels] = useState<OllamaModelInfo[]>([]);
   const [selectedModel, setSelectedModel] = useState<string>("");
+  const [selectedPersonality, setSelectedPersonality] = useState<string>("normal");
   const [quickPrompt, setQuickPrompt] = useState("");
   const [quickResponse, setQuickResponse] = useState<string | null>(null);
   const [quickError, setQuickError] = useState<string | null>(null);
@@ -30,19 +40,20 @@ export default function AI() {
   const [chatMessages, setChatMessages] = useState<ChatMessagePayload[]>([]);
   const [chatInput, setChatInput] = useState("");
   const [chatLoading, setChatLoading] = useState(false);
-  const [pullName, setPullName] = useState("");
-  const [pullLoading, setPullLoading] = useState(false);
-  const [deletingModel, setDeletingModel] = useState<string | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const { addLog } = useLog();
 
   useEffect(() => {
     let cancelled = false;
+    const timeoutMs = 15000;
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      setTimeout(() => reject(new Error("Request timed out")), timeoutMs);
+    });
     async function load() {
       try {
         const [health, tags] = await Promise.all([
-          fetchOllamaHealth(),
-          fetchOllamaTags(),
+          Promise.race([fetchOllamaHealth(), timeoutPromise]),
+          Promise.race([fetchOllamaTags(), timeoutPromise]),
         ]);
         if (!cancelled) {
           setOllamaOk(health.ok);
@@ -52,7 +63,10 @@ export default function AI() {
           }
         }
       } catch {
-        if (!cancelled) setOllamaOk(false);
+        if (!cancelled) {
+          setOllamaOk(false);
+          setModels([]);
+        }
       }
     }
     load();
@@ -76,7 +90,9 @@ export default function AI() {
     setQuickError(null);
     setQuickResponse(null);
     try {
-      const res = await ollamaGenerate({ model: selectedModel, prompt });
+      const personality = PERSONALITIES.find((p) => p.id === selectedPersonality);
+      const system = personality?.system ?? undefined;
+      const res = await ollamaGenerate({ model: selectedModel, prompt, system });
       setQuickResponse(res.response ?? "");
     } catch (err) {
       const text = err instanceof Error ? err.message : String(err);
@@ -101,7 +117,9 @@ export default function AI() {
     setChatLoading(true);
     try {
       const messages: ChatMessagePayload[] = [...chatMessages, userMsg];
-      const res = await ollamaChat({ model: selectedModel, messages });
+      const personality = PERSONALITIES.find((p) => p.id === selectedPersonality);
+      const system = personality?.system ?? undefined;
+      const res = await ollamaChat({ model: selectedModel, messages, system });
       setChatMessages((prev) => [
         ...prev,
         { role: "assistant", content: res.response ?? "" },
@@ -123,77 +141,14 @@ export default function AI() {
     }
   }
 
-  async function handlePull() {
-    const name = pullName.trim();
-    if (!name) return;
-    setPullLoading(true);
-    try {
-      await ollamaPull(name);
-      const tags = await fetchOllamaTags();
-      setModels(tags.models ?? []);
-      setPullName("");
-    } catch (err) {
-      addLog({
-        ts: new Date().toISOString(),
-        level: "ERROR",
-        msg: `Ollama pull failed: ${err instanceof Error ? err.message : err}`,
-        source: "client",
-      });
-    } finally {
-      setPullLoading(false);
-    }
-  }
-
-  async function handleDelete(modelName: string) {
-    setDeletingModel(modelName);
-    try {
-      await ollamaDelete(modelName);
-      setModels((prev) => {
-        const next = prev.filter((m) => m.name !== modelName);
-        if (selectedModel === modelName) setSelectedModel(next[0]?.name ?? "");
-        return next;
-      });
-    } catch (err) {
-      addLog({
-        ts: new Date().toISOString(),
-        level: "ERROR",
-        msg: `Ollama delete failed: ${err instanceof Error ? err.message : err}`,
-        source: "client",
-      });
-    } finally {
-      setDeletingModel(null);
-    }
-  }
-
   return (
     <div className="space-y-10">
       <section>
         <h1 className="font-mono text-3xl font-bold text-foreground">AI</h1>
         <p className="mt-2 text-foreground-secondary">
-          Local LLM via Ollama. Quick prompt, shortcuts, and chat. Requires Ollama running (e.g. localhost:11434).
-        </p>
-      </section>
-
-      <section className="rounded-lg border border-border bg-card p-6">
-        <h2 className="font-mono text-xl font-semibold text-foreground">
-          Ollama status
-        </h2>
-        <p className="mt-1 text-sm text-foreground-secondary">
-          Health and model list from webapp API proxy to Ollama.
+          Local LLM via Ollama. Quick prompt, shortcuts, and chat. Pick a model in Settings if none appear.
         </p>
         <div className="mt-4 flex flex-wrap items-center gap-4">
-          <span
-            className={cn(
-              "inline-flex items-center gap-2 rounded px-3 py-1.5 text-sm font-medium",
-              ollamaOk === null
-                ? "bg-muted text-foreground-secondary"
-                : ollamaOk
-                  ? "bg-green-900/40 text-green-300"
-                  : "bg-red-900/40 text-red-300"
-            )}
-          >
-            {ollamaOk === null ? "Checking..." : ollamaOk ? "Ollama reachable" : "Ollama unreachable"}
-          </span>
           <label className="flex items-center gap-2 text-sm text-foreground-secondary">
             Model:
             <select
@@ -212,54 +167,28 @@ export default function AI() {
               {!models.length && <option value="">No models</option>}
             </select>
           </label>
-        </div>
-
-        <div className="mt-4">
-          <h3 className="text-sm font-medium text-foreground-secondary">Models</h3>
-          <ul className="mt-2 space-y-1 text-sm text-foreground-secondary">
-            {models.length === 0 && ollamaOk !== null && (
-              <li>No models. Pull one below.</li>
-            )}
-            {models.map((m) => (
-              <li key={m.name} className="flex items-center justify-between gap-2">
-                <span className="font-mono">{m.name}</span>
-                <button
-                  type="button"
-                  onClick={() => handleDelete(m.name)}
-                  disabled={deletingModel === m.name}
-                  className={cn(
-                    "rounded border border-border px-2 py-0.5 text-xs text-red-400 hover:bg-red-900/30 disabled:opacity-50"
-                  )}
-                >
-                  {deletingModel === m.name ? "Deleting..." : "Delete"}
-                </button>
-              </li>
-            ))}
-          </ul>
-          <div className="mt-3 flex gap-2">
-            <input
-              type="text"
-              value={pullName}
-              onChange={(e) => setPullName(e.target.value)}
-              placeholder="Model name (e.g. llama3.2)"
+          <label className="flex items-center gap-2 text-sm text-foreground-secondary">
+            Personality:
+            <select
+              value={selectedPersonality}
+              onChange={(e) => setSelectedPersonality(e.target.value)}
               className={cn(
-                "flex-1 max-w-xs rounded border border-border bg-background px-3 py-1.5 text-sm text-foreground",
+                "rounded border border-border bg-background px-2 py-1 text-foreground min-w-[200px]",
                 "focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
               )}
-              disabled={!ollamaOk || pullLoading}
-            />
-            <button
-              type="button"
-              onClick={handlePull}
-              disabled={!ollamaOk || pullLoading || !pullName.trim()}
-              className={cn(
-                "rounded border border-primary bg-primary px-3 py-1.5 text-sm text-primary-foreground",
-                "hover:bg-primary/90 disabled:opacity-50"
-              )}
             >
-              {pullLoading ? "Pulling..." : "Pull"}
-            </button>
-          </div>
+              {PERSONALITIES.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.label}
+                </option>
+              ))}
+            </select>
+          </label>
+          {ollamaOk === false && (
+            <span className="text-xs text-foreground-tertiary">
+              Ollama unreachable. Check Settings (Ollama) and ensure API (5181) and Ollama (11434) are running.
+            </span>
+          )}
         </div>
       </section>
 
@@ -385,3 +314,4 @@ export default function AI() {
     </div>
   );
 }
+

@@ -5,7 +5,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from clawd_mcp.mcp_instance import mcp
+from openclaw_mcp.mcp_instance import mcp
 
 
 def _extract_tool_result(result: object) -> dict:
@@ -21,7 +21,7 @@ def _extract_tool_result(result: object) -> dict:
 @pytest.mark.asyncio
 async def test_clawd_sessions_list_success() -> None:
     """clawd_sessions list should return success with sessions."""
-    with patch("clawd_mcp.tools.sessions.GatewayClient") as mock_gateway_class:
+    with patch("openclaw_mcp.tools.sessions.GatewayClient") as mock_gateway_class:
         mock_client = MagicMock()
         mock_client.tools_invoke = AsyncMock(
             return_value={
@@ -50,7 +50,7 @@ async def test_clawd_sessions_list_success() -> None:
 @pytest.mark.asyncio
 async def test_clawd_sessions_history() -> None:
     """clawd_sessions history should invoke sessions_history."""
-    with patch("clawd_mcp.tools.sessions.GatewayClient") as mock_gateway_class:
+    with patch("openclaw_mcp.tools.sessions.GatewayClient") as mock_gateway_class:
         mock_client = MagicMock()
         mock_client.tools_invoke = AsyncMock(
             return_value={"success": True, "data": {"messages": []}}

@@ -1,4 +1,4 @@
-# clawd-mcp check script - run ruff, mypy, pytest
+# openclaw-mcp check script - run ruff, mypy, pytest
 
 param(
     [switch]$Ruff,

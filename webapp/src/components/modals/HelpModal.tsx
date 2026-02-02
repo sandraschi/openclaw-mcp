@@ -50,7 +50,7 @@ export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
         </div>
         <div className="space-y-4 px-6 py-4 text-sm text-foreground-secondary">
           <p>
-            <strong className="text-foreground">clawd-mcp</strong> bridges Cursor
+            <strong className="text-foreground">openclaw-mcp</strong> bridges Cursor
             and Claude Desktop with the OpenClaw and Moltbook ecosystem.
           </p>
           <section>
@@ -70,7 +70,7 @@ export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
               Planned by vibecode architect sandraschi, in beautiful Vienna (Alsergrund); implementation by Cursor (agentic IDE) with various LLMs. Scaffold, implement, test harness, debug, iterate. One day, token cost zilch. If you are an AI-luddite or butlerite, feel free to hate on it.
             </p>
             <p className="mb-2">
-              <a href="https://github.com/sandraschi/clawd-mcp/blob/main/docs/HOW_THIS_WAS_MADE.md" target="_blank" rel="noreferrer" className="text-primary hover:underline">
+              <a href="https://github.com/sandraschi/openclaw-mcp/blob/main/docs/HOW_THIS_WAS_MADE.md" target="_blank" rel="noreferrer" className="text-primary hover:underline">
                 docs/HOW_THIS_WAS_MADE.md
               </a>
             </p>
@@ -100,3 +100,4 @@ export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
     </div>
   );
 }
+

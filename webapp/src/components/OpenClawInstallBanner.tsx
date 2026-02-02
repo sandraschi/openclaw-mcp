@@ -3,9 +3,9 @@ import { X } from "lucide-react";
 import { cn } from "../utils/cn";
 import { fetchOpenClawStatus, type OpenClawStatusResponse } from "../services/api";
 
-const DISMISS_KEY = "clawd-mcp-openclaw-install-dismissed";
+const DISMISS_KEY = "openclaw-mcp-openclaw-install-dismissed";
 const DOCS_URL = "https://openclaw.ai/docs";
-const REPO_SECURITY = "https://github.com/sandraschi/clawd-mcp/blob/main/SECURITY.md";
+const REPO_SECURITY = "https://github.com/sandraschi/openclaw-mcp/blob/main/SECURITY.md";
 
 export default function OpenClawInstallBanner() {
   const [status, setStatus] = useState<OpenClawStatusResponse | null>(null);
@@ -54,7 +54,7 @@ export default function OpenClawInstallBanner() {
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
             <p className="font-medium text-foreground">
-              OpenClaw CLI was not detected. Install it to use the Gateway and full clawd-mcp features.
+              OpenClaw CLI was not detected. Install it to use the Gateway and full openclaw-mcp features.
             </p>
             <ul className="mt-2 list-inside list-disc space-y-0.5 text-foreground-secondary">
               <li>
@@ -101,3 +101,4 @@ export default function OpenClawInstallBanner() {
       </div>
   );
 }
+

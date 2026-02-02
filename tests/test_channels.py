@@ -5,7 +5,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from clawd_mcp.mcp_instance import mcp
+from openclaw_mcp.mcp_instance import mcp
 
 
 def _extract_tool_result(result: object) -> dict:
@@ -21,7 +21,7 @@ def _extract_tool_result(result: object) -> dict:
 @pytest.mark.asyncio
 async def test_clawd_channels_list_channels_success() -> None:
     """clawd_channels list_channels should call Gateway tool channels with action list_channels."""
-    with patch("clawd_mcp.tools.channels.GatewayClient") as mock_gateway_class:
+    with patch("openclaw_mcp.tools.channels.GatewayClient") as mock_gateway_class:
         mock_client = MagicMock()
         mock_client.tools_invoke = AsyncMock(
             return_value={

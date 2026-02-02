@@ -5,26 +5,26 @@ from textwrap import dedent
 
 from fastmcp import Context
 
-from clawd_mcp.mcp_instance import mcp
+from openclaw_mcp.mcp_instance import mcp
 
 logger = logging.getLogger(__name__)
 
 REMOVAL_STEPS = dedent("""
     1. Stop the Gateway: quit any running OpenClaw process (Gateway, Pi agent).
-    2. Disconnect clawd-mcp:
-       - MCP: Remove clawd-mcp from Cursor/Claude Desktop MCP config. Unset OPENCLAW_GATEWAY_URL and OPENCLAW_GATEWAY_TOKEN in the environment that starts the MCP server.
+    2. Disconnect openclaw-mcp:
+       - MCP: Remove openclaw-mcp from Cursor/Claude Desktop MCP config. Unset OPENCLAW_GATEWAY_URL and OPENCLAW_GATEWAY_TOKEN in the environment that starts the MCP server.
        - Webapp API: Unset OPENCLAW_GATEWAY_URL and OPENCLAW_GATEWAY_TOKEN where you run uvicorn; restart the API.
     3. Uninstall OpenClaw CLI (optional): npm uninstall -g openclaw; or see OpenClaw docs if you used the install script.
     4. Remove config (optional): delete ~/.openclaw to wipe Gateway config and local data.
 
-    Full steps: INSTALL.md section "Removing OpenClaw" in the clawd-mcp repo.
+    Full steps: INSTALL.md section "Removing OpenClaw" in the openclaw-mcp repo.
 """).strip()
 
 
 @mcp.tool()
 async def clawd_openclaw_disconnect(ctx: Context) -> dict:
     """
-    Get steps to disconnect clawd-mcp from OpenClaw and optionally remove OpenClaw.
+    Get steps to disconnect openclaw-mcp from OpenClaw and optionally remove OpenClaw.
 
     Use this if you want to stop using OpenClaw (e.g. after security advisories
     or deciding it is not for you). This tool does not change any config or
@@ -38,7 +38,7 @@ async def clawd_openclaw_disconnect(ctx: Context) -> dict:
         "clawd_openclaw_disconnect called",
         extra={"tool": "clawd_openclaw_disconnect"},
     )
-    doc_url = "https://github.com/sandraschi/clawd-mcp/blob/main/INSTALL.md#removing-openclaw"
+    doc_url = "https://github.com/sandraschi/openclaw-mcp/blob/main/INSTALL.md#removing-openclaw"
     return {
         "success": True,
         "message": "Disconnect and removal steps (no changes made by this tool):",

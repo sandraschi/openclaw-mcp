@@ -5,7 +5,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from clawd_mcp.mcp_instance import mcp
+from openclaw_mcp.mcp_instance import mcp
 
 
 def _extract_tool_result(result: object) -> dict:
@@ -21,7 +21,7 @@ def _extract_tool_result(result: object) -> dict:
 @pytest.mark.asyncio
 async def test_clawd_gateway_status_success() -> None:
     """clawd_gateway status should return success when Tools Invoke succeeds."""
-    with patch("clawd_mcp.tools.gateway.GatewayClient") as mock_gateway_class:
+    with patch("openclaw_mcp.tools.gateway.GatewayClient") as mock_gateway_class:
         mock_client = MagicMock()
         mock_client.tools_invoke = AsyncMock(
             return_value={"success": True, "data": {"sessions": []}}
@@ -41,7 +41,7 @@ async def test_clawd_gateway_status_success() -> None:
 @pytest.mark.asyncio
 async def test_clawd_gateway_status_failure() -> None:
     """clawd_gateway status should return failure when Tools Invoke fails."""
-    with patch("clawd_mcp.tools.gateway.GatewayClient") as mock_gateway_class:
+    with patch("openclaw_mcp.tools.gateway.GatewayClient") as mock_gateway_class:
         mock_client = MagicMock()
         mock_client.tools_invoke = AsyncMock(
             return_value={"success": False, "message": "Connection refused"}
@@ -61,7 +61,7 @@ async def test_clawd_gateway_status_failure() -> None:
 @pytest.mark.asyncio
 async def test_clawd_gateway_health_success() -> None:
     """clawd_gateway health should return success when Tools Invoke succeeds."""
-    with patch("clawd_mcp.tools.gateway.GatewayClient") as mock_gateway_class:
+    with patch("openclaw_mcp.tools.gateway.GatewayClient") as mock_gateway_class:
         mock_client = MagicMock()
         mock_client.tools_invoke = AsyncMock(return_value={"success": True})
         mock_client.close = AsyncMock()
@@ -79,7 +79,7 @@ async def test_clawd_gateway_health_success() -> None:
 @pytest.mark.asyncio
 async def test_clawd_gateway_doctor_success() -> None:
     """clawd_gateway doctor should run openclaw doctor subprocess."""
-    with patch("clawd_mcp.tools.gateway.asyncio.create_subprocess_exec") as mock_exec:
+    with patch("openclaw_mcp.tools.gateway.asyncio.create_subprocess_exec") as mock_exec:
         mock_proc = MagicMock()
         mock_proc.communicate = AsyncMock(return_value=(b"stdout", b""))
         mock_proc.returncode = 0
@@ -98,7 +98,7 @@ async def test_clawd_gateway_doctor_success() -> None:
 @pytest.mark.asyncio
 async def test_clawd_gateway_doctor_cli_not_found() -> None:
     """clawd_gateway doctor should return error when openclaw not found."""
-    with patch("clawd_mcp.tools.gateway.asyncio.create_subprocess_exec") as mock_exec:
+    with patch("openclaw_mcp.tools.gateway.asyncio.create_subprocess_exec") as mock_exec:
         mock_exec.side_effect = FileNotFoundError("openclaw not found")
 
         result = await mcp.call_tool(

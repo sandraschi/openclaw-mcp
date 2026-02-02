@@ -5,7 +5,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from clawd_mcp.mcp_instance import mcp
+from openclaw_mcp.mcp_instance import mcp
 
 
 def _extract_tool_result(result: object) -> dict:
@@ -21,7 +21,7 @@ def _extract_tool_result(result: object) -> dict:
 @pytest.mark.asyncio
 async def test_clawd_agent_wake() -> None:
     """clawd_agent wake operation should call hooks_wake."""
-    with patch("clawd_mcp.tools.agent.GatewayClient") as mock_gateway_class:
+    with patch("openclaw_mcp.tools.agent.GatewayClient") as mock_gateway_class:
         mock_client = MagicMock()
         mock_client.hooks_wake = AsyncMock(
             return_value={"success": True, "message": "Wake triggered successfully."}
@@ -42,7 +42,7 @@ async def test_clawd_agent_wake() -> None:
 @pytest.mark.asyncio
 async def test_clawd_agent_run_agent() -> None:
     """clawd_agent run_agent operation should return stub response."""
-    with patch("clawd_mcp.tools.agent.GatewayClient") as mock_gateway_class:
+    with patch("openclaw_mcp.tools.agent.GatewayClient") as mock_gateway_class:
         mock_client = MagicMock()
         mock_client.close = AsyncMock()
         mock_gateway_class.return_value = mock_client
@@ -63,7 +63,7 @@ async def test_clawd_agent_run_agent() -> None:
 @pytest.mark.asyncio
 async def test_clawd_agent_send_message() -> None:
     """clawd_agent send_message operation should return stub response."""
-    with patch("clawd_mcp.tools.agent.GatewayClient") as mock_gateway_class:
+    with patch("openclaw_mcp.tools.agent.GatewayClient") as mock_gateway_class:
         mock_client = MagicMock()
         mock_client.close = AsyncMock()
         mock_gateway_class.return_value = mock_client

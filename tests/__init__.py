@@ -1,1 +1,1 @@
-"""clawd-mcp tests."""
+"""openclaw-mcp tests."""
